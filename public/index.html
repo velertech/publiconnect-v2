@@ -781,7 +781,14 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
         </div>
         <div id="auth-profile-section" style="display:none;">
           <div style="height:1px;background:var(--gray-100);margin:4px 0 20px;"></div>
-          <p style="font-size:13px;font-weight:700;color:var(--gray-900);margin-bottom:16px;letter-spacing:-0.2px;">Completa tu perfil</p>
+          <div style="background:var(--blue-light);border-radius:14px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:20px;">🎁</span>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--blue);">¡30 minutos de WiFi gratis!</div>
+              <div style="font-size:11px;color:var(--text-body);margin-top:2px;">Completa tu registro para conectarte ahora.</div>
+            </div>
+          </div>
+          <p style="font-size:13px;font-weight:700;color:var(--gray-900);margin-bottom:16px;letter-spacing:-0.2px;">Datos básicos</p>
           <div style="display:flex;gap:10px;">
             <div class="input-group" style="flex:1;">
               <label class="input-label">Nombre <span style="color:var(--red);">*</span></label>
@@ -803,37 +810,23 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
             </div>
           </div>
           <div class="input-group">
-            <label class="input-label">Correo electrónico <span style="color:var(--red);">*</span></label>
-            <input type="email" class="input-field" id="reg-email" placeholder="ana@correo.com" oninput="checkRegisterForm()" autocomplete="email">
-          </div>
-          <div class="input-group">
-            <label class="input-label">Fecha de nacimiento <span style="color:var(--red);">*</span></label>
-            <div style="display:flex;gap:8px;" id="reg-dob">
-              <select class="input-field" id="reg-dob-day" onchange="updateDobDays();checkRegisterForm();clearFieldError('reg-dob')" style="flex:1;padding-left:12px;">
-                <option value="">Día</option>
-              </select>
-              <select class="input-field" id="reg-dob-month" onchange="updateDobDays();checkRegisterForm();clearFieldError('reg-dob')" style="flex:1.6;padding-left:12px;">
-                <option value="">Mes</option>
-                <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
-                <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
-                <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
-                <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
-              </select>
-              <select class="input-field" id="reg-dob-year" onchange="updateDobDays();checkRegisterForm();clearFieldError('reg-dob')" style="flex:1.3;padding-left:12px;">
-                <option value="">Año</option>
-              </select>
+            <label class="input-label">Código postal <span style="color:var(--red);">*</span></label>
+            <div style="position:relative;">
+              <input type="text" class="input-field" id="reg-postal" placeholder="86000" maxlength="5" inputmode="numeric"
+                oninput="this.value=this.value.replace(/\D/g,'');checkRegisterForm();if(this.value.length===5)lookupRegPostal(this.value);"
+                autocomplete="postal-code">
+              <span id="reg-postal-spinner" style="display:none;position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:14px;animation:spin 0.8s linear infinite;">⏳</span>
             </div>
-            <div id="dob-error" style="color:var(--red);font-size:12px;font-weight:600;margin-top:5px;display:none;">⚠ Selecciona tu fecha de nacimiento completa.</div>
+            <div id="reg-postal-status" style="font-size:11px;margin-top:5px;min-height:14px;"></div>
           </div>
-          <div class="input-group">
-            <label class="input-label">Género <span style="color:var(--red);">*</span></label>
-            <div style="display:flex;gap:10px;" id="gender-group">
-              <button class="gender-btn" id="g-mujer" onclick="selectGender('Mujer')">Mujer</button>
-              <button class="gender-btn" id="g-hombre" onclick="selectGender('Hombre')">Hombre</button>
-              <button class="gender-btn" id="g-otro" onclick="selectGender('Otro')">Otro</button>
-            </div>
-            <div id="gender-error" style="color:var(--red);font-size:12px;font-weight:600;margin-top:5px;display:none;">⚠ Selecciona tu género.</div>
-          </div>
+          <!-- Campos ocultos mantenidos por compatibilidad con funciones existentes -->
+          <input type="hidden" id="reg-email" value="">
+          <input type="hidden" id="reg-dob-day" value="">
+          <input type="hidden" id="reg-dob-month" value="">
+          <input type="hidden" id="reg-dob-year" value="">
+          <div id="dob-error" style="display:none;"></div>
+          <div id="gender-group" style="display:none;"></div>
+          <div id="gender-error" style="display:none;"></div>
           <div class="input-group">
             <label class="input-label">Crea tu PIN de 4 dígitos</label>
             <div style="display:flex;gap:12px;margin-bottom:10px;justify-content:center;">
@@ -1194,6 +1187,16 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
       </div>
       <div style="padding:20px 16px;background:var(--bg-screen);">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;" id="profile-stats"></div>
+
+        <!-- Banner perfil incompleto -->
+        <div id="profile-complete-banner" onclick="showScreen('edit-profile')" style="display:none;cursor:pointer;background:linear-gradient(135deg,#1E88E5,#1565c0);border-radius:18px;padding:16px 20px;margin-bottom:20px;align-items:center;gap:14px;">
+          <div style="width:44px;height:44px;background:rgba(255,255,255,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🎁</div>
+          <div style="flex:1;">
+            <div style="color:#fff;font-size:14px;font-weight:800;line-height:1.3;">¡Completa tu perfil y gana 30 min WiFi!</div>
+            <div style="color:rgba(255,255,255,0.75);font-size:12px;margin-top:3px;">Agrega correo, fecha de nac. y género.</div>
+          </div>
+          <div style="color:rgba(255,255,255,0.8);font-size:20px;">›</div>
+        </div>
         <div class="card" style="padding:4px 0;margin-bottom:20px;">
           <div onclick="openEditProfile()" style="display:flex;align-items:center;gap:16px;padding:18px 20px;border-bottom:1px solid var(--border-card);cursor:pointer;">
             <span style="font-size:20px;">✏️</span><span style="font-size:14px;font-weight:600;color:var(--text-heading);flex:1;">Editar perfil</span><span style="color:var(--text-muted);">›</span>
@@ -1787,6 +1790,8 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
 // ── State ──────────────────────────────────────────────────────────────────
 const state = {
   user: null,
+  _firebaseUID: null,
+  _regPostalData: null,
   rewards: [],
   selectedBrand: null,
   pin: '',
@@ -2682,20 +2687,22 @@ async function doLogin() {
 
     // 2. Reconstruir el estado del usuario desde Supabase
     state.user = {
-      phone:       data.telefono,
-      name:        data.nombre,
-      firstName:   data.primer_nombre,
-      middleName:  data.segundo_nombre,
-      lastName1:   data.apellido1,
-      lastName2:   data.apellido2,
-      email:       data.email,
-      dob:         data.fecha_nac,
-      age:         data.edad,
-      gender:      data.genero,
-      pin:         data.pin,
-      wifiMinutes: data.wifi_minutos,
-      points:      data.puntos,
-      photo:       data.foto_url || null,
+      phone:           data.telefono,
+      name:            data.nombre,
+      firstName:       data.primer_nombre,
+      middleName:      data.segundo_nombre,
+      lastName1:       data.apellido1,
+      lastName2:       data.apellido2,
+      email:           data.email,
+      dob:             data.fecha_nac,
+      age:             data.edad,
+      gender:          data.genero,
+      pin:             data.pin,
+      wifiMinutes:     data.wifi_minutos,
+      points:          data.puntos,
+      photo:           data.foto_url || null,
+      postal:          data.postal   || '',
+      perfil_completo: data.perfil_completo || false,
     };
 
     // 3. Actualizar último acceso
@@ -2739,6 +2746,14 @@ function checkRegisterForm() {
   const phone = document.getElementById('reg-phone').value.replace(/\D/g,'');
   if (state.regStep === 'phone') {
     document.getElementById('btn-register').disabled = phone.length < 10;
+    return;
+  }
+  if (state.regStep === 'profile') {
+    const firstName = document.getElementById('reg-firstname').value.trim();
+    const lastName1 = document.getElementById('reg-lastname1').value.trim();
+    const postal    = document.getElementById('reg-postal').value.trim();
+    document.getElementById('btn-register').disabled =
+      !firstName || !lastName1 || postal.length < 5 || state.pin.length < 4;
   }
 }
 
@@ -2827,20 +2842,9 @@ window._recaptchaVerifier = new window._RecaptchaVerifier(
     const middleName = document.getElementById('reg-middlename').value.trim();
     const lastName1  = document.getElementById('reg-lastname1').value.trim();
     const lastName2  = document.getElementById('reg-lastname2').value.trim();
-    const email = document.getElementById('reg-email').value.trim();
-    const dobDay = document.getElementById('reg-dob-day').value;
-    const dobMonth = document.getElementById('reg-dob-month').value;
-    const dobYear = document.getElementById('reg-dob-year').value;
-    const dob = dobDay && dobMonth && dobYear ? `${dobDay.padStart(2,'0')}/${dobMonth.padStart(2,'0')}/${dobYear}` : '';
+    const postal     = document.getElementById('reg-postal').value.trim();
 
-    // Reset all inline field errors first
-    clearFieldError('reg-dob');
-    clearFieldError('gender-group');
-    document.getElementById('dob-error').style.display = 'none';
-    document.getElementById('gender-error').style.display = 'none';
     document.getElementById('reg-error').textContent = '';
-
-    // Validate each required field individually
     let hasError = false;
 
     if (!firstName || !lastName1) {
@@ -2848,101 +2852,79 @@ window._recaptchaVerifier = new window._RecaptchaVerifier(
       hasError = true;
     }
 
-    if (!email) {
-      if (!hasError) document.getElementById('reg-error').textContent = '⚠ Ingresa tu correo electrónico.';
-      hasError = true;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      document.getElementById('reg-error').textContent = '⚠ Ingresa un correo electrónico válido.';
-      hasError = true;
-    }
-
-    if (!dob) {
-      const dobEl = document.getElementById('reg-dob');
-      dobEl.classList.add('field-error');
-      document.getElementById('dob-error').style.display = 'block';
-      if (!hasError) document.getElementById('reg-error').textContent = '⚠ Selecciona tu fecha de nacimiento completa.';
-      hasError = true;
-    } else {
-      // Validate age
-      const today = new Date();
-      const birthDate = new Date(+dobYear, +dobMonth - 1, +dobDay);
-      let age = today.getFullYear() - birthDate.getFullYear();
-      if (today < new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate())) age--;
-      if (age < 13) {
-        const dobEl = document.getElementById('reg-dob');
-        dobEl.classList.add('field-error');
-        document.getElementById('dob-error').textContent = '⚠ Debes tener al menos 13 años para registrarte.';
-        document.getElementById('dob-error').style.display = 'block';
-        if (!hasError) document.getElementById('reg-error').textContent = '⚠ Debes tener al menos 13 años para registrarte.';
-        hasError = true;
-      }
-    }
-
-    if (!state.gender) {
-      const genderEl = document.getElementById('gender-group');
-      genderEl.classList.add('field-error');
-      document.getElementById('gender-error').style.display = 'block';
-      if (!hasError) document.getElementById('reg-error').textContent = '⚠ Selecciona tu género.';
+    if (!postal || postal.length < 5) {
+      if (!hasError) document.getElementById('reg-error').textContent = '⚠ Ingresa un código postal de 5 dígitos.';
       hasError = true;
     }
 
     if (state.pin.length < 4) {
-      if (!hasError) document.getElementById('reg-error').textContent = '⚠ Ingresa y confirma tu PIN de 4 dígitos.';
+      if (!hasError) document.getElementById('reg-error').textContent = '⚠ Ingresa tu PIN de 4 dígitos.';
       hasError = true;
     }
 
     if (hasError) return;
 
-    // Build full name from parts
     const phone = document.getElementById('reg-phone').value.replace(/\D/g,'');
-    const dob2  = `${dobDay.padStart(2,'0')}/${dobMonth.padStart(2,'0')}/${dobYear}`;
-    const today = new Date();
-    const birthDate = new Date(+dobYear, +dobMonth - 1, +dobDay);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    if (today < new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate())) age--;
-    const name = [firstName, middleName, lastName1, lastName2].filter(Boolean).join(' ');
-    const newAccount = { phone, pin: state.pin, name, firstName, middleName, lastName1, lastName2, email, dob: dob2, age, gender: state.gender };
+    const name  = [firstName, middleName, lastName1, lastName2].filter(Boolean).join(' ');
+    const newAccount = {
+      phone,
+      pin:        state.pin,
+      name,
+      firstName,
+      middleName,
+      lastName1,
+      lastName2,
+      postal,
+      email:      '',
+      dob:        '',
+      age:        null,
+      gender:     '',
+      perfil_completo: false
+    };
     state.accounts.push(newAccount);
 
     // ── Guardar usuario en Supabase ──────────────────────────────────────────
     async function guardarUsuarioSupabase(account) {
-    const { error } = await _db.from('usuarios').upsert({
-    firebase_uid:   state._firebaseUID,
-    telefono:       account.phone,
-    nombre:         account.name,
-    primer_nombre:  account.firstName,
-    segundo_nombre: account.middleName  || '',
-    apellido1:      account.lastName1,
-    apellido2:      account.lastName2   || '',
-    email:          account.email,
-    fecha_nac:      account.dob,
-    edad:           account.age,
-    genero:         account.gender,
-    pin:            account.pin,
-    wifi_minutos:   30,
-    puntos:         0
-    }, { onConflict: 'firebase_uid' });
+      const { error } = await _db.from('usuarios').upsert({
+        firebase_uid:    state._firebaseUID,
+        telefono:        account.phone,
+        nombre:          account.name,
+        primer_nombre:   account.firstName,
+        segundo_nombre:  account.middleName  || '',
+        apellido1:       account.lastName1,
+        apellido2:       account.lastName2   || '',
+        postal:          account.postal,
+        estado:          state._regPostalData?.estado    || null,
+        municipio:       state._regPostalData?.municipio || null,
+        email:           '',
+        fecha_nac:       null,
+        edad:            null,
+        genero:          '',
+        pin:             account.pin,
+        wifi_minutos:    30,
+        puntos:          0,
+        perfil_completo: false
+      }, { onConflict: 'firebase_uid' });
 
-    if (error) {
-    console.error('Error guardando usuario:', error.message);
-    } else {
-    console.log('Usuario guardado en Supabase correctamente');
+      if (error) {
+        console.error('Error guardando usuario:', error.message);
+      } else {
+        console.log('Usuario guardado en Supabase correctamente');
+      }
     }
-  }
 
     state.user = { ...newAccount };
-    // 🎁 Welcome bonus: 30 free WiFi minutes for new users
+    // 🎁 Bono bienvenida: 30 min WiFi
     state.rewards.push({
-      type: 'wifi',
-      minutes: 30,
-      label: 'Bienvenida',
-      source: 'signup_bonus',
+      type:     'wifi',
+      minutes:  30,
+      label:    'Bienvenida',
+      source:   'signup_bonus',
       earnedAt: Date.now()
     });
 
     guardarUsuarioSupabase(newAccount);
     document.getElementById('reg-error').textContent = '';
-    // New users go to connection screen instead of home
     startConnectionFlow();
   }
 }
@@ -3649,6 +3631,17 @@ function renderProfile() {
     document.getElementById('profile-phone').textContent = `+52 ${p.slice(0,2)} *** *** ${p.slice(-2)}`;
   }
 
+  // ── Banner "completa tu perfil" si faltan datos ──────────────────────────
+  const bannerEl = document.getElementById('profile-complete-banner');
+  if (bannerEl) {
+    const perfilCompleto = !!(u && u.email && u.dob && u.gender);
+    if (!perfilCompleto && u) {
+      bannerEl.style.display = 'flex';
+    } else {
+      bannerEl.style.display = 'none';
+    }
+  }
+
   const coupons = state.rewards.filter(r => r.type === 'points').length;
   const wifi = state.rewards.filter(r => r.type === 'wifi').reduce((a,r) => a+(r.minutes||0), 0);
   const watched = state.rewards.length;
@@ -3736,7 +3729,80 @@ function applyAvatarToProfile(photoUrl) {
   }
 }
 
-// ── Postal Code Lookup ─────────────────────────────────────────────────────
+// ── Postal Code Lookup (REGISTRO) ──────────────────────────────────────────
+// Usa los mismos endpoints SEPOMEX pero escribe en los elementos del registro.
+// Guarda estado/municipio/colonia en state._regPostalData para incluirlos
+// en el upsert de Supabase al crear la cuenta.
+async function lookupRegPostal(cp) {
+  const spinner  = document.getElementById('reg-postal-spinner');
+  const status   = document.getElementById('reg-postal-status');
+
+  state._regPostalData = null;
+  status.style.color   = 'var(--text-muted)';
+  status.textContent   = 'Consultando SEPOMEX…';
+  spinner.style.display = 'inline';
+
+  function renderRows(rows) {
+    spinner.style.display = 'none';
+    if (!rows || rows.length === 0) {
+      status.textContent   = '⚠ Código postal no encontrado.';
+      status.style.color   = 'var(--red)';
+      return;
+    }
+    state._regPostalData = {
+      estado:    rows[0].estado,
+      municipio: rows[0].municipio,
+      colonia:   rows[0].colonia || '',
+    };
+    status.textContent = `✓ ${rows[0].municipio}, ${rows[0].estado}`;
+    status.style.color = 'var(--green)';
+  }
+
+  // ── Primary: IcaliaLabs ──────────────────────────────────────────────
+  try {
+    const res = await fetch(
+      `https://sepomex.icalialabs.com/api/v1/zip_codes?zip_code=${cp}&per_page=200`,
+      { headers: { 'Accept': 'application/json' } }
+    );
+    if (!res.ok) throw new Error('icalia_' + res.status);
+    const json = await res.json();
+    const zips = json.zip_codes;
+    if (Array.isArray(zips) && zips.length > 0) {
+      renderRows(zips.map(z => ({
+        colonia:   z.d_asenta      || '',
+        municipio: z.d_mnpio       || '',
+        estado:    z.d_estado      || '',
+      })));
+      return;
+    }
+    throw new Error('icalia_empty');
+  } catch (_) { /* fallback */ }
+
+  // ── Fallback: api-sepomex.hckdrk.mx ─────────────────────────────────
+  try {
+    const res = await fetch(`https://api-sepomex.hckdrk.mx/query/info_cp/${cp}`);
+    if (!res.ok) throw new Error('hckdrk_' + res.status);
+    const arr = await res.json();
+    const valid = Array.isArray(arr)
+      ? arr.filter(i => i && !i.error && i.response && i.response.estado)
+      : [];
+    if (valid.length > 0) {
+      renderRows(valid.map(i => ({
+        colonia:   i.response.asentamiento || '',
+        municipio: i.response.municipio    || '',
+        estado:    i.response.estado       || '',
+      })));
+      return;
+    }
+    throw new Error('hckdrk_empty');
+  } catch (_) {
+    spinner.style.display = 'none';
+    status.textContent   = '⚠ No se encontró información para ese código postal.';
+    status.style.color   = 'var(--red)';
+  }
+}
+
+// ── Postal Code Lookup (PERFIL)
 // Source 1 (primary):  sepomex.icalialabs.com  — free, no token, real SEPOMEX DB
 //   GET /api/v1/zip_codes?zip_code={cp}&per_page=200
 //   Returns: { zip_codes: [{ d_codigo, d_asenta, d_tipo_asenta, d_mnpio, d_estado }] }
@@ -4062,23 +4128,42 @@ async function saveEditProfile() {
   // ── Persistir en Supabase ─────────────────────────────────────────────────
   // NUEVO 19/05/2026 — guarda todos los campos incluyendo foto_url
   try {
+    // ── Detectar si el perfil quedó completo por primera vez ──────────────
+    const perfilAhora = !!(email && dob && epGender);
+    const esPrimerVez = perfilAhora && !state.user.perfil_completo;
+
+    if (esPrimerVez) {
+      // +30 minutos WiFi por completar perfil (una sola vez)
+      state.rewards.push({
+        type:     'wifi',
+        minutes:  30,
+        label:    'Perfil completo',
+        source:   'profile_bonus',
+        earnedAt: Date.now()
+      });
+      state.user.perfil_completo = true;
+      sincronizarWifiSupabase();
+      showToast('🎉 ¡+30 minutos por completar tu perfil!');
+    }
+
     await _db.from('usuarios').update({
-      primer_nombre:  firstName,
-      segundo_nombre: middleName  || null,
-      apellido1:      lastName1,
-      apellido2:      lastName2   || null,
-      nombre:         name,
-      email:          email,
-      fecha_nac:      dob,
-      edad:           finalAge,
-      genero:         epGender,
-      nickname:       nickname    || null,
-      postal:         postal      || null,
-      curp:           curp        || null,
-      colonia:        colonia     || null,
-      estado:         estado      || null,
-      municipio:      municipio   || null,
-      foto_url:       state.user.photo || null,
+      primer_nombre:   firstName,
+      segundo_nombre:  middleName  || null,
+      apellido1:       lastName1,
+      apellido2:       lastName2   || null,
+      nombre:          name,
+      email:           email,
+      fecha_nac:       dob,
+      edad:            finalAge,
+      genero:          epGender,
+      nickname:        nickname    || null,
+      postal:          postal      || null,
+      curp:            curp        || null,
+      colonia:         colonia     || null,
+      estado:          estado      || null,
+      municipio:       municipio   || null,
+      foto_url:        state.user.photo || null,
+      perfil_completo: perfilAhora,
     }).eq('telefono', state.user.phone);
   } catch (err) {
     console.error('Error al guardar perfil en Supabase:', err);
@@ -5511,8 +5596,11 @@ async function sincronizarWifiSupabase() {
     .filter(r => r.type === 'wifi')
     .reduce((a, r) => a + (r.minutes || 0), 0);
 
+  const updateData = { wifi_minutos: totalWifi };
+  if (state.user.perfil_completo) updateData.perfil_completo = true;
+
   await _db.from('usuarios')
-    .update({ wifi_minutos: totalWifi })
+    .update(updateData)
     .eq('telefono', state.user.phone);
 }
 

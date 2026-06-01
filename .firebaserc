@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "publiconnect-pro"
-  }
+    "default": "publiconnect-pro",
+    "Victor's MacBookPro": "publiconnect-pro"
+  },
+  "targets": {},
+  "etags": {}
 }
