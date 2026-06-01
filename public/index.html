@@ -784,7 +784,7 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
           <div style="background:var(--blue-light);border-radius:14px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px;">
             <span style="font-size:20px;">🎁</span>
             <div>
-              <div style="font-size:13px;font-weight:700;color:var(--blue);">¡30 minutos de WiFi gratis!</div>
+              <div style="font-size:13px;font-weight:700;color:var(--blue);">¡5 minutos de WiFi gratis!</div>
               <div style="font-size:11px;color:var(--text-body);margin-top:2px;">Completa tu registro para conectarte ahora.</div>
             </div>
           </div>
@@ -1129,18 +1129,53 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
       </div>
     </div>
   </div>
-  <div class="screen" id="screen-ad" style="background:#000;position:relative;">
-    <div id="ad-content" style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;">
-      <div id="ad-emoji" style="font-size:80px;margin-bottom:16px;"></div>
-      <div id="ad-brand-name" style="color:#fff;font-size:18px;font-weight:600;opacity:0.8;"></div>
-      <div style="color:rgba(255,255,255,0.5);font-size:13px;margin-top:8px;">No puedes saltar este anuncio</div>
+  <div class="screen" id="screen-ad" style="background:#000;position:fixed;inset:0;width:100%;height:100%;z-index:200;overflow:hidden;display:none;flex-direction:column;">
+
+    <!-- Contenido del anuncio ocupa TODO el alto disponible -->
+    <div id="ad-content" style="position:absolute;inset:0;display:flex;flex-direction:column;">
+
+      <!-- Imagen estática -->
+      <div id="ad-img-wrap" style="display:none;position:absolute;inset:0;">
+        <img id="ad-img" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.1) 0%,rgba(0,0,0,0.65) 100%);"></div>
+        <div style="position:absolute;bottom:90px;left:0;right:0;text-align:center;padding:0 24px;">
+          <div id="ad-emoji-img" style="font-size:48px;margin-bottom:8px;"></div>
+          <div id="ad-brand-name-img" style="color:#fff;font-size:20px;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,0.5);"></div>
+          <div id="ad-desc-img" style="color:rgba(255,255,255,0.8);font-size:13px;margin-top:6px;line-height:1.5;text-shadow:0 1px 4px rgba(0,0,0,0.5);"></div>
+        </div>
+      </div>
+
+      <!-- Fallback emoji -->
+      <div id="ad-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:0;">
+        <div id="ad-emoji" style="font-size:80px;margin-bottom:16px;"></div>
+        <div id="ad-brand-name" style="color:#fff;font-size:18px;font-weight:600;opacity:0.8;"></div>
+        <div style="color:rgba(255,255,255,0.5);font-size:13px;margin-top:8px;">No puedes saltar este anuncio</div>
+      </div>
+
+      <!-- Video YouTube — ocupa toda la pantalla -->
+      <div id="ad-video-wrap" style="display:none;position:absolute;inset:0;background:#000;">
+        <iframe id="ad-yt-iframe"
+          style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"
+          allow="autoplay; encrypted-media; fullscreen"
+          allowfullscreen>
+        </iframe>
+        <div style="position:absolute;top:12px;left:12px;background:rgba(0,0,0,0.6);border-radius:8px;padding:5px 12px;z-index:5;">
+          <span id="ad-brand-name-yt" style="color:#fff;font-size:12px;font-weight:700;"></span>
+        </div>
+      </div>
+
     </div>
-    <div id="ad-timer" style="position:absolute;bottom:32px;right:24px;background:rgba(0,0,0,0.6);border-radius:12px;padding:8px 16px;border:1px solid rgba(255,255,255,0.2);">
+
+    <!-- Timer -->
+    <div id="ad-timer" style="position:absolute;bottom:36px;right:16px;background:rgba(0,0,0,0.75);border-radius:12px;padding:8px 16px;border:1px solid rgba(255,255,255,0.2);z-index:15;">
       <span id="ad-countdown" style="color:#fff;font-weight:700;font-size:16px;">30s</span>
     </div>
+
+    <!-- Barra de progreso -->
     <div id="ad-progress"><div id="ad-bar"></div></div>
+
     <!-- Reward overlay -->
-    <div id="ad-reward" style="display:none;position:absolute;inset:0;background:linear-gradient(160deg,#0f172a 0%,#1e293b 100%);flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;">
+    <div id="ad-reward" style="display:none;position:absolute;inset:0;background:linear-gradient(160deg,#0f172a 0%,#1e293b 100%);flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:20;">
       <div class="pop" style="font-size:72px;margin-bottom:16px;">🎉</div>
       <h2 id="reward-title" style="color:#fff;font-size:26px;font-weight:800;margin:0 0 8px;"></h2>
       <p id="reward-sub" style="color:rgba(255,255,255,0.65);margin-bottom:32px;font-size:14px;"></p>
@@ -1192,7 +1227,7 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
         <div id="profile-complete-banner" onclick="showScreen('edit-profile')" style="display:none;cursor:pointer;background:linear-gradient(135deg,#1E88E5,#1565c0);border-radius:18px;padding:16px 20px;margin-bottom:20px;align-items:center;gap:14px;">
           <div style="width:44px;height:44px;background:rgba(255,255,255,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🎁</div>
           <div style="flex:1;">
-            <div style="color:#fff;font-size:14px;font-weight:800;line-height:1.3;">¡Completa tu perfil y gana 30 min WiFi!</div>
+            <div style="color:#fff;font-size:14px;font-weight:800;line-height:1.3;">¡Completa tu perfil y gana 5 min WiFi!</div>
             <div style="color:rgba(255,255,255,0.75);font-size:12px;margin-top:3px;">Agrega correo, fecha de nac. y género.</div>
           </div>
           <div style="color:rgba(255,255,255,0.8);font-size:20px;">›</div>
@@ -1296,8 +1331,8 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
       <div style="background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:18px;padding:18px 20px;margin-bottom:14px;text-align:left;display:flex;align-items:center;gap:14px;">
         <div style="font-size:32px;flex-shrink:0;">⏳</div>
         <div>
-          <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:3px;">15 minutos de navegación gratuita</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.5;">Tu sesión actual incluye <strong>15 min gratis</strong>. ¿Necesitas más tiempo? Gana minutos extra viendo anuncios en PubliConnect.</div>
+          <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:3px;">5 minutos de navegación gratuita</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.5;">Tu sesión actual incluye <strong>5 min gratis</strong>. ¿Necesitas más tiempo? Gana minutos extra viendo anuncios en PubliConnect.</div>
         </div>
       </div>
 
@@ -1306,7 +1341,7 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
         <div style="font-size:13px;font-weight:700;color:var(--text-heading);margin-bottom:12px;">¿Quieres más minutos gratis?</div>
         <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
           <span style="font-size:18px;flex-shrink:0;">🎬</span>
-          <div style="font-size:13px;color:var(--text-body);line-height:1.5;"><strong style="color:var(--text-heading);">Mira anuncios</strong> de tus marcas favoritas y gana hasta 30 min por anuncio visto.</div>
+          <div style="font-size:13px;color:var(--text-body);line-height:1.5;"><strong style="color:var(--text-heading);">Mira anuncios</strong> de tus marcas favoritas y gana minutos de WiFi por cada anuncio visto.</div>
         </div>
         <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
           <span style="font-size:18px;flex-shrink:0;">🗺️</span>
@@ -1448,14 +1483,76 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
           <label class="input-label">Nombre de la empresa *</label>
           <input id="biz-reg-name" type="text" class="input-field" placeholder="Ej: Café del Correo">
         </div>
+
+        <!-- Logo de la empresa — OBLIGATORIO -->
+        <div class="input-group">
+          <label class="input-label">Logo de la empresa <span style="color:var(--red);">*</span></label>
+          <div id="biz-logo-zone" onclick="document.getElementById('biz-logo-input').click()"
+            style="border:2px dashed var(--border-input);border-radius:14px;padding:20px;cursor:pointer;background:var(--bg-chip);transition:border-color 0.2s;display:flex;align-items:center;gap:16px;">
+            <div id="biz-logo-preview-wrap" style="width:64px;height:64px;border-radius:14px;background:var(--bg-card);border:1.5px solid var(--border-card);display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0;overflow:hidden;">
+              <span id="biz-logo-emoji">🏢</span>
+              <img id="biz-logo-preview-img" style="display:none;width:100%;height:100%;object-fit:cover;" alt="logo">
+            </div>
+            <div style="text-align:left;flex:1;">
+              <div style="font-size:13px;font-weight:700;color:var(--text-heading);" id="biz-logo-label">Toca para subir tu logo</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.6;">
+                Formatos: PNG, JPG, WebP<br>
+                Tamaño recomendado: <strong>512 × 512 px</strong><br>
+                Peso máximo: <strong>500 KB</strong> (recomendado menos de 200 KB)<br>
+                Forma: cuadrada para mejor visualización
+              </div>
+            </div>
+            <input id="biz-logo-input" type="file" accept="image/*" style="display:none;" onchange="bizHandleLogo(this)">
+          </div>
+          <div id="biz-logo-status" style="font-size:11px;margin-top:5px;min-height:14px;"></div>
+        </div>
+
         <div class="input-group">
           <label class="input-label">Giro / Categoría *</label>
           <select id="biz-reg-category" class="input-field">
             <option value="">Selecciona categoría</option>
-            <option>Restaurante / Cafetería</option><option>Moda y ropa</option>
-            <option>Supermercado</option><option>Tecnología</option>
-            <option>Entretenimiento</option><option>Hogar</option>
-            <option>Salud y belleza</option><option>Otro</option>
+            <optgroup label="🟢 Regional">
+              <option value="Hecho en Tabasco">🟢 Hecho en Tabasco</option>
+              <option value="Hecho en México">🇲🇽 Hecho en México</option>
+            </optgroup>
+            <optgroup label="🍽 Alimentos y bebidas">
+              <option value="Restaurante / Cafetería">Restaurante / Cafetería</option>
+              <option value="Comida rápida">Comida rápida</option>
+              <option value="Panadería / Pastelería">Panadería / Pastelería</option>
+              <option value="Supermercado">Supermercado</option>
+              <option value="Abarrotes">Abarrotes</option>
+              <option value="Bebidas alcohólicas">Bebidas alcohólicas</option>
+            </optgroup>
+            <optgroup label="👗 Moda y estilo">
+              <option value="Moda y ropa">Moda y ropa</option>
+              <option value="Calzado">Calzado</option>
+              <option value="Salud y belleza">Salud y belleza</option>
+            </optgroup>
+            <optgroup label="🏠 Hogar y servicios">
+              <option value="Hogar">Hogar</option>
+              <option value="Ferretería / Materiales">Ferretería / Materiales</option>
+              <option value="Servicios profesionales">Servicios profesionales</option>
+            </optgroup>
+            <optgroup label="📚 Educación">
+              <option value="Educación">Educación</option>
+            </optgroup>
+            <optgroup label="📱 Tecnología">
+              <option value="Tecnología">Tecnología</option>
+              <option value="Turismo / Hospedaje">Turismo / Hospedaje</option>
+            </optgroup>
+            <optgroup label="🎭 Entretenimiento">
+              <option value="Entretenimiento">Entretenimiento</option>
+            </optgroup>
+            <optgroup label="🏥 Salud">
+              <option value="Farmacia">Farmacia</option>
+              <option value="Clínica / Médico">Clínica / Médico</option>
+            </optgroup>
+            <optgroup label="🏛 Sector público y organizaciones">
+              <option value="Gobierno">Gobierno</option>
+              <option value="Política">Política</option>
+              <option value="Cámaras empresariales">Cámaras empresariales</option>
+            </optgroup>
+            <option value="Otro">Otro</option>
           </select>
         </div>
         <div class="input-group">
@@ -1577,15 +1674,23 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
     <!-- Header -->
     <div style="background:linear-gradient(135deg,#0f172a,#1e293b);padding:48px 20px 20px;flex-shrink:0;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <div>
-          <div style="color:rgba(255,255,255,0.5);font-size:11px;font-weight:700;letter-spacing:1px;">PANEL EMPRESARIAL</div>
-          <div id="biz-dash-name" style="color:#fff;font-size:20px;font-weight:800;margin-top:2px;">Empresa</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <!-- Logo de la empresa -->
+          <div id="biz-dash-logo" onclick="document.getElementById('biz-logo-update-input').click()"
+            style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;flex-shrink:0;overflow:hidden;transition:border-color 0.2s;"
+            title="Toca para cambiar tu logo">🏢</div>
+          <input id="biz-logo-update-input" type="file" accept="image/*" style="display:none;" onchange="bizUpdateLogo(this)">
+          <div>
+            <div style="color:rgba(255,255,255,0.5);font-size:11px;font-weight:700;letter-spacing:1px;">PANEL EMPRESARIAL</div>
+            <div id="biz-dash-name" style="color:#fff;font-size:20px;font-weight:800;margin-top:2px;">Empresa</div>
+          </div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;">
           <button onclick="showScreen('biz-campaign-new')" style="background:linear-gradient(135deg,#10b981,#059669);border:none;border-radius:12px;color:#fff;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">+ Campaña</button>
           <button onclick="bizLogout()" style="background:rgba(255,255,255,0.1);border:none;border-radius:12px;color:rgba(255,255,255,0.7);padding:8px 12px;font-size:12px;cursor:pointer;font-family:var(--font);">Salir</button>
         </div>
       </div>
+
       <!-- KPI cards -->
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
         <div style="background:rgba(255,255,255,0.08);border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,0.1);">
@@ -1660,26 +1765,46 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
 
       <!-- Step 2: Media -->
       <div id="biz-camp-step2" style="display:none;">
-        <div style="font-size:13px;font-weight:700;color:var(--text-muted);margin-bottom:16px;letter-spacing:0.5px;">PASO 2 · IMAGEN O VIDEO</div>
-        <!-- Upload zone -->
-        <div id="biz-upload-zone" onclick="document.getElementById('biz-media-input').click()" style="border:2px dashed var(--border-input);border-radius:18px;padding:40px 20px;text-align:center;cursor:pointer;background:var(--bg-chip);transition:border-color 0.2s,background 0.2s;margin-bottom:16px;"
-          ondragover="event.preventDefault();this.style.borderColor='var(--blue)'" ondragleave="this.style.borderColor='var(--border-input)'"
-          ondrop="bizHandleDrop(event)">
-          <div style="font-size:40px;margin-bottom:10px;" id="biz-upload-icon">🖼️</div>
-          <div style="font-weight:700;color:var(--text-heading);font-size:14px;" id="biz-upload-label">Sube una imagen o video</div>
-          <div style="color:var(--text-muted);font-size:12px;margin-top:6px;">JPG, PNG, MP4 · Máx 20 MB · Arrastra o toca aquí</div>
-          <input id="biz-media-input" type="file" accept="image/*,video/*" style="display:none;" onchange="bizHandleMedia(this)">
-        </div>
-        <!-- Preview -->
-        <div id="biz-media-preview" style="display:none;margin-bottom:16px;border-radius:14px;overflow:hidden;background:var(--bg-chip);">
-          <img id="biz-preview-img" style="width:100%;max-height:200px;object-fit:cover;display:none;">
-          <video id="biz-preview-vid" style="width:100%;max-height:200px;display:none;" controls muted></video>
-          <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
-            <span id="biz-preview-name" style="font-size:12px;color:var(--text-muted);"></span>
-            <button onclick="bizClearMedia()" style="color:var(--red);background:none;border:none;font-size:12px;font-weight:700;cursor:pointer;">✕ Quitar</button>
+        <div style="font-size:13px;font-weight:700;color:var(--text-muted);margin-bottom:16px;letter-spacing:0.5px;">PASO 2 · VIDEO E IMAGEN</div>
+
+        <!-- URL YouTube (campo principal) -->
+        <div class="input-group">
+          <label class="input-label">URL del video de YouTube *</label>
+          <input id="camp-video-url" type="url" class="input-field" placeholder="https://www.youtube.com/watch?v=..."
+            oninput="bizPreviewYT(this.value)">
+          <div style="font-size:11px;color:var(--text-muted);margin-top:5px;">
+            El video se reproducirá automáticamente cuando el usuario vea el anuncio. La duración del video define el tiempo del anuncio.
           </div>
         </div>
-        <div style="display:flex;gap:10px;">
+
+        <!-- Preview YouTube -->
+        <div id="biz-yt-preview" style="display:none;border-radius:14px;overflow:hidden;background:#000;margin-bottom:14px;aspect-ratio:16/9;">
+          <iframe id="biz-yt-frame" style="width:100%;height:100%;border:none;" allow="autoplay" allowfullscreen></iframe>
+        </div>
+        <div id="biz-yt-error" style="display:none;color:var(--red);font-size:12px;margin-bottom:10px;"></div>
+
+        <!-- Separador -->
+        <div style="display:flex;align-items:center;gap:10px;margin:16px 0;">
+          <div style="flex:1;height:1px;background:var(--border-input);"></div>
+          <span style="font-size:12px;color:var(--text-muted);font-weight:600;">IMAGEN DEL ANUNCIO (opcional)</span>
+          <div style="flex:1;height:1px;background:var(--border-input);"></div>
+        </div>
+
+        <!-- URL imagen -->
+        <div class="input-group">
+          <label class="input-label">URL de imagen (JPG, PNG, WebP)</label>
+          <input id="camp-imagen-url" type="url" class="input-field" placeholder="https://ejemplo.com/imagen.jpg"
+            oninput="bizPreviewImagen(this.value)">
+          <div style="font-size:11px;color:var(--text-muted);margin-top:5px;">
+            Si no hay video, se mostrará esta imagen durante el anuncio.
+          </div>
+        </div>
+        <!-- Preview imagen -->
+        <div id="biz-img-preview-wrap" style="display:none;border-radius:14px;overflow:hidden;margin-bottom:14px;max-height:180px;">
+          <img id="biz-img-preview" src="" alt="" style="width:100%;max-height:180px;object-fit:cover;">
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:8px;">
           <button onclick="bizCampBack(2)" style="flex:1;padding:14px;background:var(--bg-chip);border:1px solid var(--border-input);border-radius:14px;font-weight:700;font-size:14px;cursor:pointer;color:var(--text-heading);font-family:var(--font);">← Atrás</button>
           <button onclick="bizCampNext(2)" style="flex:2;" class="btn-primary">Siguiente →</button>
         </div>
@@ -2555,12 +2680,25 @@ function stopWifiSession()      { disconnectFromAP(); }
 
 // ── Navigation ─────────────────────────────────────────────────────────────
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  // screen-ad es position:fixed — se maneja aparte para no afectar el flujo
+  const adScreen = document.getElementById('screen-ad');
+
+  if (id === 'ad') {
+    // Mostrar overlay de anuncio encima de todo
+    if (adScreen) adScreen.style.display = 'flex';
+    return;
+  }
+
+  // Para cualquier otra pantalla, ocultar el overlay de anuncio si estaba visible
+  if (adScreen) adScreen.style.display = 'none';
+
+  document.querySelectorAll('.screen').forEach(s => {
+    if (s.id !== 'screen-ad') s.classList.remove('active');
+  });
   const target = document.getElementById('screen-' + id);
   if (!target) { console.warn('showScreen: screen not found:', id); return; }
   target.classList.add('active');
   window.scrollTo(0,0);
-  // Show/hide sidebar based on whether we're in an app screen
   const appScreens = ['home','brands','rewards','profile','brand-detail'];
   const bizScreens = ['biz-welcome','biz-auth','biz-dashboard','biz-campaign-new','admin-login','admin-dashboard'];
   const sidebarEl = document.getElementById('sidebar');
@@ -2901,7 +3039,7 @@ window._recaptchaVerifier = new window._RecaptchaVerifier(
         edad:            null,
         genero:          '',
         pin:             account.pin,
-        wifi_minutos:    30,
+        wifi_minutos:    5,
         puntos:          0,
         perfil_completo: false
       }, { onConflict: 'firebase_uid' });
@@ -2914,10 +3052,10 @@ window._recaptchaVerifier = new window._RecaptchaVerifier(
     }
 
     state.user = { ...newAccount };
-    // 🎁 Bono bienvenida: 30 min WiFi
+    // 🎁 Bono bienvenida: 5 min WiFi
     state.rewards.push({
       type:     'wifi',
-      minutes:  30,
+      minutes:  5,
       label:    'Bienvenida',
       source:   'signup_bonus',
       earnedAt: Date.now()
@@ -3185,11 +3323,33 @@ function updateHome() {
   renderHomeCategories();
 }
 
-function renderHomeCategories() {
+async function renderHomeCategories() {
   const container = document.getElementById('home-categories');
-  container.innerHTML = CATEGORIES.map(cat => {
-    const brands = BRANDS.filter(b => b.category === cat);
-    if (!brands.length) return '';
+  if (!container) return;
+
+  // Cargar campañas de Supabase primero
+  await cargarCampanasAprobadas();
+  const allBrands = getAllBrands();
+
+  if (allBrands.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:40px 20px;color:var(--text-muted);">
+        <div style="font-size:44px;margin-bottom:12px;">📣</div>
+        <div style="font-weight:700;font-size:14px;color:var(--text-heading);margin-bottom:6px;">Muy pronto habrá anuncios aquí</div>
+        <div style="font-size:12px;line-height:1.6;">Las empresas registradas publicarán<br>sus ofertas y promociones en esta sección.</div>
+      </div>`;
+    return;
+  }
+
+  // Agrupar por categoría dinámicamente
+  const catMap = {};
+  allBrands.forEach(b => {
+    const cat = b.category || 'Anunciante';
+    if (!catMap[cat]) catMap[cat] = [];
+    catMap[cat].push(b);
+  });
+
+  container.innerHTML = Object.entries(catMap).map(([cat, brands]) => {
     const isTabasco = cat === 'Hecho en Tabasco';
     const isMexico  = cat === 'Hecho en México';
     const headerStyle = isTabasco
@@ -3218,31 +3378,86 @@ function renderHomeCategories() {
 }
 
 function brandCardSmall(b) {
-  const tagClass = b.type === 'wifi' ? 'tag-green' : 'tag-blue';
   const tagColor = b.type === 'wifi' ? 'var(--green)' : 'var(--blue)';
-  const tagIcon = b.type === 'wifi' ? '📶' : '🎫';
-  return `<div onclick="openBrand(${b.id})" style="min-width:150px;background:var(--bg-card);border-radius:18px;padding:16px;cursor:pointer;box-shadow:var(--shadow-card);border:1.5px solid var(--border-card);">
-    <div style="width:48px;height:48px;border-radius:14px;background:${b.bg};display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:12px;">${b.emoji}</div>
+  const tagBg    = b.type === 'wifi' ? 'var(--green-light)' : 'var(--blue-light)';
+  const tagIcon  = b.type === 'wifi' ? '📶' : '🎫';
+  const idStr    = typeof b.id === 'number' ? b.id : `'${b.id}'`;
+  const logoHtml = b.logo_url
+    ? `<img src="${b.logo_url}" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`
+    : '';
+  const desc = (b.desc || '').slice(0, 42) + ((b.desc||'').length > 42 ? '...' : '');
+  return `<div onclick="openBrand(${idStr})" style="min-width:150px;background:var(--bg-card);border-radius:18px;padding:16px;cursor:pointer;box-shadow:var(--shadow-card);border:1.5px solid var(--border-card);">
+    <div style="position:relative;width:48px;height:48px;border-radius:14px;background:${b.bg};overflow:hidden;margin-bottom:12px;">
+      ${logoHtml}
+      <span style="${b.logo_url ? 'display:none;' : ''}position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:26px;">${b.emoji}</span>
+    </div>
     <div style="font-size:14px;font-weight:700;color:var(--text-heading);margin-bottom:4px;">${b.name}</div>
-    <div style="font-size:11px;color:var(--text-body);line-height:1.4;margin-bottom:10px;">${b.desc.slice(0,42)}...</div>
-    <div class="${tagClass}"><span style="font-size:10px;">${tagIcon}</span><span style="font-size:11px;font-weight:700;color:${tagColor};">${b.reward}</span></div>
+    <div style="font-size:11px;color:var(--text-body);line-height:1.4;margin-bottom:10px;">${desc}</div>
+    <div style="display:inline-flex;align-items:center;gap:4px;background:${tagBg};border-radius:8px;padding:3px 8px;">
+      <span style="font-size:10px;">${tagIcon}</span>
+      <span style="font-size:11px;font-weight:700;color:${tagColor};">${b.reward}</span>
+    </div>
   </div>`;
 }
 
 // ── Brands ─────────────────────────────────────────────────────────────────
+// Campañas aprobadas desde Supabase
+let _campanasCargadas = [];
+
+async function cargarCampanasAprobadas() {
+  if (!_db) return;
+  try {
+    const { data, error } = await _db
+      .from('campanas')
+      .select('id,empresa_id,empresa_nombre,empresa_categoria,empresa_logo_url,nombre,descripcion,tipo,premio,emoji,video_url,imagen_url')
+      .eq('status', 'approved')
+      .order('created_at', { ascending: false });
+    if (!error && data) {
+      _campanasCargadas = data.map(c => ({
+        id:         c.id,
+        name:       c.empresa_nombre || c.nombre,
+        category:   c.empresa_categoria || 'Anunciante',
+        logo_url:   c.empresa_logo_url  || null,
+        color:      '#6366f1',
+        bg:         'var(--blue-light)',
+        emoji:      c.emoji || '📣',
+        reward:     c.premio,
+        type:       c.tipo === 'wifi' ? 'wifi' : 'points',
+        minutes:    c.tipo === 'wifi' ? (parseInt(c.premio) || 5) : 0,
+        desc:       c.descripcion || ('Ve este anuncio y gana ' + c.premio),
+        video_url:  c.video_url  || null,
+        imagen_url: c.imagen_url || null,
+        campanaId:  c.id,
+        empresa_nombre:     c.empresa_nombre,
+        empresa_categoria:  c.empresa_categoria || '',
+        _fromDB: true,
+      }));
+    }
+  } catch(e) { console.warn('[PubliConnect] No se pudieron cargar campañas:', e.message); }
+}
+
+function getAllBrands() {
+  // Solo campañas reales de empresas registradas en Supabase
+  return _campanasCargadas;
+}
+
 function renderBrands() {
-  const chips = ['Todos',...CATEGORIES];
-  document.getElementById('brands-chips').innerHTML = chips.map(c => {
-    const isTabasco = c === 'Hecho en Tabasco';
-    const isMexico  = c === 'Hecho en México';
-    const active = state.currentBrandFilter === c;
-    let extra = '';
-    if (!active && isTabasco) extra = 'background:linear-gradient(90deg,#065f46,#16a34a);color:#fff;border-color:transparent;';
-    if (!active && isMexico)  extra = 'background:linear-gradient(90deg,#991b1b,#dc2626);color:#fff;border-color:transparent;';
-    const label = isTabasco ? '🟢 ' + c : isMexico ? '🇲🇽 ' + c : c;
-    return `<button class="chip ${active ? 'active' : ''}" style="${extra}" onclick="filterBrands('${c}')">${label}</button>`;
-  }).join('');
-  renderBrandsGrid();
+  cargarCampanasAprobadas().then(() => {
+    const brands = getAllBrands();
+    const cats   = [...new Set(brands.map(b => b.category))];
+    const chips  = ['Todos', ...cats];
+    document.getElementById('brands-chips').innerHTML = chips.map(c => {
+      const isTabasco = c === 'Hecho en Tabasco';
+      const isMexico  = c === 'Hecho en México';
+      const active = state.currentBrandFilter === c;
+      let extra = '';
+      if (!active && isTabasco) extra = 'background:linear-gradient(90deg,#065f46,#16a34a);color:#fff;border-color:transparent;';
+      if (!active && isMexico)  extra = 'background:linear-gradient(90deg,#991b1b,#dc2626);color:#fff;border-color:transparent;';
+      const label = isTabasco ? '🟢 ' + c : isMexico ? '🇲🇽 ' + c : c;
+      return `<button class="chip ${active ? 'active' : ''}" style="${extra}" onclick="filterBrands('${c}')">${label}</button>`;
+    }).join('');
+    renderBrandsGrid();
+  });
 }
 
 function filterBrands(cat) {
@@ -3251,15 +3466,40 @@ function filterBrands(cat) {
 }
 
 function renderBrandsGrid() {
-  const filtered = state.currentBrandFilter === 'Todos' ? BRANDS : BRANDS.filter(b => b.category === state.currentBrandFilter);
+  const brands   = getAllBrands();
+  const filtered = state.currentBrandFilter === 'Todos' ? brands : brands.filter(b => b.category === state.currentBrandFilter);
+
+  if (filtered.length === 0) {
+    const msg = _campanasCargadas.length === 0
+      ? '¡Muy pronto habrá anuncios de empresas locales aquí!'
+      : 'Sin anuncios en esta categoría por el momento.';
+    document.getElementById('brands-grid').innerHTML =
+      `<div style="text-align:center;padding:48px 20px;color:var(--text-muted);">
+        <div style="font-size:48px;margin-bottom:12px;">📣</div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:6px;color:var(--text-heading);">Sin anuncios disponibles</div>
+        <div style="font-size:13px;line-height:1.6;">${msg}</div>
+      </div>`;
+    return;
+  }
+
   document.getElementById('brands-grid').innerHTML = `<div class="brands-grid-inner">` +
     filtered.map(b => {
       const tagColor = b.type === 'wifi' ? 'var(--green)' : 'var(--blue)';
-      const tagBg = b.type === 'wifi' ? 'var(--green-light)' : 'var(--blue-light)';
-      const tagIcon = b.type === 'wifi' ? '📶' : '🎫';
-      return `<div onclick="openBrand(${b.id})" style="background:var(--bg-card);border-radius:18px;padding:16px;cursor:pointer;box-shadow:var(--shadow-card);border:1.5px solid var(--border-card);">
-        <div style="width:44px;height:44px;border-radius:12px;background:${b.bg};display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:10px;">${b.emoji}</div>
-        <div style="font-size:13px;font-weight:700;color:var(--text-heading);margin-bottom:8px;">${b.name}</div>
+      const tagBg    = b.type === 'wifi' ? 'var(--green-light)' : 'var(--blue-light)';
+      const tagIcon  = b.type === 'wifi' ? '📶' : '🎫';
+      const idStr    = typeof b.id === 'number' ? b.id : `'${b.id}'`;
+      const hasMed   = b.video_url || b.imagen_url;
+      const logoHtml = b.logo_url
+        ? `<img src="${b.logo_url}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:12px;" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`
+        : '';
+      return `<div onclick="openBrand(${idStr})" style="background:var(--bg-card);border-radius:18px;padding:16px;cursor:pointer;box-shadow:var(--shadow-card);border:1.5px solid var(--border-card);">
+        <div style="position:relative;width:44px;height:44px;border-radius:12px;background:${b.bg};display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:10px;overflow:hidden;">
+          ${logoHtml}
+          <span style="${b.logo_url ? 'display:none;' : ''}position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:24px;">${b.emoji}</span>
+          ${hasMed ? `<span style="position:absolute;top:-4px;right:-4px;background:${b.video_url ? '#ef4444' : '#6366f1'};color:#fff;border-radius:4px;font-size:8px;font-weight:800;padding:1px 4px;z-index:2;">${b.video_url ? '▶' : '🖼'}</span>` : ''}
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text-heading);margin-bottom:4px;">${b.name}</div>
+        ${b._fromDB ? `<div style="font-size:10px;color:var(--text-muted);margin-bottom:5px;">${b.categoria||b.empresa_categoria||''}</div>` : ''}
         <div style="display:inline-flex;align-items:center;gap:4px;background:${tagBg};border-radius:8px;padding:3px 8px;">
           <span style="font-size:9px;">${tagIcon}</span>
           <span style="font-size:10px;font-weight:700;color:${tagColor};">${b.reward}</span>
@@ -3269,7 +3509,8 @@ function renderBrandsGrid() {
 }
 
 function openBrand(id) {
-  const b = BRANDS.find(x => x.id === id);
+  const brands = getAllBrands();
+  const b = typeof id === 'number' ? brands.find(x => x.id === id) : brands.find(x => x.id === id || x.id == id);
   state.selectedBrand = b;
   document.getElementById('brand-detail-hero').style.background = b.bg;
   document.getElementById('bd-emoji').textContent = b.emoji;
@@ -3286,27 +3527,125 @@ function openBrand(id) {
 }
 
 // ── Ad Simulation ──────────────────────────────────────────────────────────
+// ── Helpers YouTube ────────────────────────────────────────────
+function getYTVideoId(url) {
+  if (!url) return null;
+  const m = url.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/);
+  return m ? m[1] : null;
+}
+
 function startAd() {
   const b = state.selectedBrand;
-  document.getElementById('ad-emoji').textContent = b.emoji;
-  document.getElementById('ad-brand-name').textContent = 'Anuncio de ' + b.name;
-  document.getElementById('ad-reward').style.display = 'none';
-  document.getElementById('ad-content').style.display = 'flex';
-  document.getElementById('ad-timer').style.display = 'block';
-  document.getElementById('ad-bar').style.width = '0%';
-  let secs = 30;
-  document.getElementById('ad-countdown').textContent = secs + 's';
+  if (!b) return;
+
+  // 1. Mostrar la pantalla PRIMERO — Firefox necesita el DOM visible
   showScreen('ad');
-  if (state.adTimer) clearInterval(state.adTimer);
-  state.adTimer = setInterval(() => {
-    secs--;
-    document.getElementById('ad-countdown').textContent = secs + 's';
-    document.getElementById('ad-bar').style.width = ((30-secs)/30*100) + '%';
-    if (secs <= 0) {
-      clearInterval(state.adTimer);
-      showReward();
+
+  // 2. Limpiar timer previo
+  if (state.adTimer) { clearInterval(state.adTimer); state.adTimer = null; }
+  state._adYTStarted = false;
+
+  // 3. Esperar un frame para que el DOM esté disponible (fix Firefox)
+  requestAnimationFrame(() => {
+    // Helper seguro — evita null errors en cualquier navegador
+    const el = id => document.getElementById(id);
+
+    // Resetear elementos base
+    if (el('ad-reward'))  el('ad-reward').style.display  = 'none';
+    if (el('ad-content')) el('ad-content').style.display = 'flex';
+    if (el('ad-timer'))   el('ad-timer').style.display   = 'block';
+    if (el('ad-bar'))     el('ad-bar').style.width       = '0%';
+
+    // Ocultar todos los modos
+    if (el('ad-video-wrap')) el('ad-video-wrap').style.display = 'none';
+    if (el('ad-img-wrap'))   el('ad-img-wrap').style.display   = 'none';
+    if (el('ad-fallback'))   el('ad-fallback').style.display   = 'none';
+
+    const videoUrl  = b.video_url  || null;
+    const imagenUrl = b.imagen_url || b.mediaURL || null;
+    const ytId      = getYTVideoId(videoUrl);
+
+    if (ytId) {
+      // ── MODO VIDEO YOUTUBE ──────────────────────────────────────
+      if (el('ad-video-wrap'))   el('ad-video-wrap').style.display  = 'flex';
+      if (el('ad-brand-name-yt')) el('ad-brand-name-yt').textContent = b.name;
+
+      let totalSecs = 30;
+      let secs = totalSecs;
+      if (el('ad-countdown')) el('ad-countdown').textContent = secs + 's';
+
+      // Cargar iframe con autoplay
+      const iframe = el('ad-yt-iframe');
+      if (iframe) {
+        iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&controls=0&rel=0&modestbranding=1&enablejsapi=1&origin=${encodeURIComponent(location.origin)}`;
+      }
+
+      // Escuchar fin de video desde YouTube API
+      function onYTMessage(evt) {
+        try {
+          const d = typeof evt.data === 'string' ? JSON.parse(evt.data) : evt.data;
+          if (d.event === 'infoDelivery' && d.info?.duration && !state._adYTStarted) {
+            const dur = Math.ceil(d.info.duration);
+            if (dur > 0) { totalSecs = dur; secs = dur; }
+            state._adYTStarted = true;
+          }
+          if (d.event === 'infoDelivery' && d.info?.playerState === 0) {
+            clearInterval(state.adTimer);
+            window.removeEventListener('message', onYTMessage);
+            if (el('ad-bar')) el('ad-bar').style.width = '100%';
+            setTimeout(showReward, 400);
+          }
+        } catch(e) {}
+      }
+      window.addEventListener('message', onYTMessage);
+
+      // Timer de respaldo
+      state.adTimer = setInterval(() => {
+        secs--;
+        if (secs < 0) secs = 0;
+        if (el('ad-countdown')) el('ad-countdown').textContent = secs + 's';
+        if (el('ad-bar')) el('ad-bar').style.width = (((totalSecs - secs) / totalSecs) * 100) + '%';
+        if (secs <= 0) {
+          clearInterval(state.adTimer);
+          window.removeEventListener('message', onYTMessage);
+          try { el('ad-yt-iframe')?.contentWindow?.postMessage('{"event":"command","func":"stopVideo","args":""}','*'); } catch(e){}
+          setTimeout(showReward, 400);
+        }
+      }, 1000);
+
+    } else if (imagenUrl) {
+      // ── MODO IMAGEN ─────────────────────────────────────────────
+      if (el('ad-img-wrap'))       el('ad-img-wrap').style.display     = 'flex';
+      if (el('ad-img'))            el('ad-img').src                    = imagenUrl;
+      if (el('ad-emoji-img'))      el('ad-emoji-img').textContent      = b.emoji;
+      if (el('ad-brand-name-img')) el('ad-brand-name-img').textContent = b.name;
+      if (el('ad-desc-img'))       el('ad-desc-img').textContent       = b.desc || '';
+
+      let secs = 30;
+      if (el('ad-countdown')) el('ad-countdown').textContent = secs + 's';
+      state.adTimer = setInterval(() => {
+        secs--;
+        if (el('ad-countdown')) el('ad-countdown').textContent = secs + 's';
+        if (el('ad-bar')) el('ad-bar').style.width = ((30 - secs) / 30 * 100) + '%';
+        if (secs <= 0) { clearInterval(state.adTimer); showReward(); }
+      }, 1000);
+
+    } else {
+      // ── MODO FALLBACK (emoji) ───────────────────────────────────
+      if (el('ad-fallback'))    el('ad-fallback').style.display    = 'flex';
+      if (el('ad-emoji'))       el('ad-emoji').textContent         = b.emoji;
+      if (el('ad-brand-name'))  el('ad-brand-name').textContent    = 'Anuncio de ' + b.name;
+
+      let secs = 30;
+      if (el('ad-countdown')) el('ad-countdown').textContent = secs + 's';
+      state.adTimer = setInterval(() => {
+        secs--;
+        if (el('ad-countdown')) el('ad-countdown').textContent = secs + 's';
+        if (el('ad-bar')) el('ad-bar').style.width = ((30 - secs) / 30 * 100) + '%';
+        if (secs <= 0) { clearInterval(state.adTimer); showReward(); }
+      }, 1000);
     }
-  }, 1000);
+  }); // end requestAnimationFrame
 }
 
 function genCode(name) {
@@ -3315,28 +3654,58 @@ function genCode(name) {
 
 function showReward() {
   const b = state.selectedBrand;
+  if (!b) return;
+  const el = id => document.getElementById(id);
+
   const code = genCode(b.name);
-  state.pendingReward = { ...b, code, earned: new Date().toLocaleDateString('es-MX'), expires: '31/12/2026', minutes: b.minutes || 0, pointsQty: b.type === 'points' ? parseInt(b.reward) || 1 : 0 };
-  document.getElementById('reward-title').textContent = b.type === 'wifi' ? '¡Ganaste WiFi!' : '¡Ganaste puntos de regalo!';
-  document.getElementById('reward-sub').textContent = b.type === 'wifi' ? `${b.reward} de navegación gratuita` : `${b.reward} puntos de regalo de ${b.name}`;
-  document.getElementById('reward-code').textContent = code;
-  document.getElementById('ad-content').style.display = 'none';
-  document.getElementById('ad-timer').style.display = 'none';
-  const rw = document.getElementById('ad-reward');
-  rw.style.display = 'flex';
-  document.getElementById('btn-save-reward').textContent = 'Guardar puntos';
-  document.getElementById('btn-save-reward').style.background = 'var(--blue)';
+  state.pendingReward = {
+    ...b, code,
+    earned:    new Date().toLocaleDateString('es-MX'),
+    expires:   '31/12/2026',
+    minutes:   b.minutes || 0,
+    pointsQty: b.type === 'points' ? parseInt(b.reward) || 1 : 0
+  };
+
+  if (el('reward-title')) el('reward-title').textContent = b.type === 'wifi'
+    ? '¡Ganaste WiFi!' : '¡Ganaste puntos de regalo!';
+  if (el('reward-sub'))   el('reward-sub').textContent = b.type === 'wifi'
+    ? `${b.reward} de navegación gratuita`
+    : `${b.reward} puntos de regalo de ${b.name}`;
+  if (el('reward-code'))  el('reward-code').textContent = code;
+
+  // Ocultar contenido del anuncio
+  if (el('ad-content')) el('ad-content').style.display = 'none';
+  if (el('ad-timer'))   el('ad-timer').style.display   = 'none';
+  // Detener iframe YouTube si había
+  const iframe = el('ad-yt-iframe');
+  if (iframe) { try { iframe.src = ''; } catch(e){} }
+
+  const rw = el('ad-reward');
+  if (rw) rw.style.display = 'flex';
+  if (el('btn-save-reward')) {
+    el('btn-save-reward').textContent = 'Guardar puntos';
+    el('btn-save-reward').style.background = 'var(--blue)';
+  }
 }
 
 function saveReward() {
   if (state.pendingReward) {
     state.rewards.unshift(state.pendingReward);
     state.pendingReward = null;
-     sincronizarWifiSupabase();
+    sincronizarWifiSupabase();
   }
-  document.getElementById('btn-save-reward').textContent = '✓ Guardado';
-  document.getElementById('btn-save-reward').style.background = 'var(--green)';
-  setTimeout(() => { renderRewards(); showScreen('rewards'); }, 700);
+  const btn = document.getElementById('btn-save-reward');
+  if (btn) { btn.textContent = '✓ Guardado'; btn.style.background = 'var(--green)'; }
+  setTimeout(() => {
+    // Ocultar overlay de anuncio y navegar a premios
+    const adScreen = document.getElementById('screen-ad');
+    if (adScreen) adScreen.style.display = 'none';
+    // Limpiar iframe YouTube
+    const iframe = document.getElementById('ad-yt-iframe');
+    if (iframe) { try { iframe.src = ''; } catch(e){} }
+    renderRewards();
+    showScreen('rewards');
+  }, 700);
 }
 
 // ── Rewards ────────────────────────────────────────────────────────────────
@@ -3496,7 +3865,7 @@ function renderRewards() {
                 <button onclick="connectToAP('${s.network}')" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:7px 12px;border-radius:12px;font-weight:600;font-size:11px;cursor:pointer;font-family:var(--font);">📶 ${s.name.split(' ')[0]}</button>`).join('')}
               </div>`
           }` : `
-          <button onclick="renderBrands();showScreen('brands')" style="background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.4);color:#fff;padding:10px 24px;border-radius:14px;font-weight:700;font-size:13px;cursor:pointer;font-family:var(--font);">▶️ Ver anuncio · +30 min</button>
+          <button onclick="renderBrands();showScreen('brands')" style="background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.4);color:#fff;padding:10px 24px;border-radius:14px;font-weight:700;font-size:13px;cursor:pointer;font-family:var(--font);">▶️ Ver anuncio · +minutos WiFi</button>
         `}
       </div>
 
@@ -3729,77 +4098,33 @@ function applyAvatarToProfile(photoUrl) {
   }
 }
 
-// ── Postal Code Lookup (REGISTRO) ──────────────────────────────────────────
-// Usa los mismos endpoints SEPOMEX pero escribe en los elementos del registro.
-// Guarda estado/municipio/colonia en state._regPostalData para incluirlos
-// en el upsert de Supabase al crear la cuenta.
+// ── Postal Code Lookup (REGISTRO) — usa dataset oficial Correos de México
 async function lookupRegPostal(cp) {
-  const spinner  = document.getElementById('reg-postal-spinner');
-  const status   = document.getElementById('reg-postal-status');
+  const spinner = document.getElementById('reg-postal-spinner');
+  const status  = document.getElementById('reg-postal-status');
 
   state._regPostalData = null;
-  status.style.color   = 'var(--text-muted)';
-  status.textContent   = 'Consultando SEPOMEX…';
-  spinner.style.display = 'inline';
+  status.style.color  = 'var(--text-muted)';
+  status.textContent  = 'Consultando…';
+  if (spinner) spinner.style.display = 'inline';
 
-  function renderRows(rows) {
-    spinner.style.display = 'none';
-    if (!rows || rows.length === 0) {
-      status.textContent   = '⚠ Código postal no encontrado.';
-      status.style.color   = 'var(--red)';
-      return;
-    }
-    state._regPostalData = {
-      estado:    rows[0].estado,
-      municipio: rows[0].municipio,
-      colonia:   rows[0].colonia || '',
-    };
-    status.textContent = `✓ ${rows[0].municipio}, ${rows[0].estado}`;
-    status.style.color = 'var(--green)';
+  const rows = await _fetchCP(cp);
+
+  if (spinner) spinner.style.display = 'none';
+  if (!rows || rows.length === 0) {
+    status.textContent = '⚠ Código postal no encontrado. Verifica e intenta de nuevo.';
+    status.style.color = 'var(--red)';
+    return;
   }
 
-  // ── Primary: IcaliaLabs ──────────────────────────────────────────────
-  try {
-    const res = await fetch(
-      `https://sepomex.icalialabs.com/api/v1/zip_codes?zip_code=${cp}&per_page=200`,
-      { headers: { 'Accept': 'application/json' } }
-    );
-    if (!res.ok) throw new Error('icalia_' + res.status);
-    const json = await res.json();
-    const zips = json.zip_codes;
-    if (Array.isArray(zips) && zips.length > 0) {
-      renderRows(zips.map(z => ({
-        colonia:   z.d_asenta      || '',
-        municipio: z.d_mnpio       || '',
-        estado:    z.d_estado      || '',
-      })));
-      return;
-    }
-    throw new Error('icalia_empty');
-  } catch (_) { /* fallback */ }
-
-  // ── Fallback: api-sepomex.hckdrk.mx ─────────────────────────────────
-  try {
-    const res = await fetch(`https://api-sepomex.hckdrk.mx/query/info_cp/${cp}`);
-    if (!res.ok) throw new Error('hckdrk_' + res.status);
-    const arr = await res.json();
-    const valid = Array.isArray(arr)
-      ? arr.filter(i => i && !i.error && i.response && i.response.estado)
-      : [];
-    if (valid.length > 0) {
-      renderRows(valid.map(i => ({
-        colonia:   i.response.asentamiento || '',
-        municipio: i.response.municipio    || '',
-        estado:    i.response.estado       || '',
-      })));
-      return;
-    }
-    throw new Error('hckdrk_empty');
-  } catch (_) {
-    spinner.style.display = 'none';
-    status.textContent   = '⚠ No se encontró información para ese código postal.';
-    status.style.color   = 'var(--red)';
-  }
+  state._regPostalData = {
+    estado:    rows[0].estado,
+    municipio: rows[0].municipio,
+    colonia:   rows[0].colonia || '',
+  };
+  const n = rows.length;
+  status.textContent = `✓ ${n} colonia${n !== 1 ? 's' : ''} · ${rows[0].municipio}, ${rows[0].estado}`;
+  status.style.color = 'var(--green)';
 }
 
 // ── Postal Code Lookup (PERFIL)
@@ -3818,88 +4143,39 @@ async function lookupPostalCode(cp) {
   const estadoEl = document.getElementById('ep-estado');
   const munEl    = document.getElementById('ep-municipio');
 
-  // Reset
   results.style.display = 'none';
   colSel.innerHTML = '<option value="">Selecciona tu colonia</option>';
   estadoEl.value = '';
-  munEl.value = '';
+  munEl.value    = '';
   status.style.color = 'var(--text-muted)';
-  status.textContent = 'Consultando SEPOMEX…';
-  spinner.style.display = 'inline';
+  status.textContent = 'Consultando…';
+  if (spinner) spinner.style.display = 'inline';
 
-  // Shared renderer
-  function renderRows(rows) {
-    spinner.style.display = 'none';
-    if (!rows || rows.length === 0) {
-      status.textContent = '⚠ Código postal no encontrado.';
-      status.style.color = 'var(--red)';
-      return false;
-    }
-    estadoEl.value = rows[0].estado;
-    munEl.value    = rows[0].municipio;
-    const saved = state.user?.colonia || '';
-    rows.forEach(({ colonia, tipo }) => {
-      if (!colonia) return;
-      const opt = document.createElement('option');
-      opt.value = colonia;
-      opt.textContent = tipo ? `${colonia} (${tipo})` : colonia;
-      if (colonia === saved) opt.selected = true;
-      colSel.appendChild(opt);
-    });
-    if (!saved && colSel.options.length > 1) colSel.selectedIndex = 1;
-    results.style.display = 'block';
-    const n = colSel.options.length - 1;
-    status.textContent = `✓ ${n} colonia${n !== 1 ? 's' : ''} · ${rows[0].municipio}, ${rows[0].estado}`;
-    status.style.color = 'var(--green)';
-    return true;
-  }
+  const rows = await _fetchCP(cp);
 
-  // ── Primary: IcaliaLabs (free, no token) ──────────────────────────────
-  try {
-    const res = await fetch(
-      `https://sepomex.icalialabs.com/api/v1/zip_codes?zip_code=${cp}&per_page=200`,
-      { headers: { 'Accept': 'application/json' } }
-    );
-    if (!res.ok) throw new Error('icalia_' + res.status);
-    const json = await res.json();
-    const zips = json.zip_codes;
-    if (Array.isArray(zips) && zips.length > 0) {
-      const rows = zips.map(z => ({
-        colonia:   z.d_asenta       || '',
-        municipio: z.d_mnpio        || '',
-        estado:    z.d_estado       || '',
-        tipo:      z.d_tipo_asenta  || '',
-      }));
-      renderRows(rows);
-      return;
-    }
-    throw new Error('icalia_empty');
-  } catch (_) { /* fall through to backup */ }
-
-  // ── Fallback: api-sepomex.hckdrk.mx (no auth, same SEPOMEX source) ───
-  try {
-    const res = await fetch(`https://api-sepomex.hckdrk.mx/query/info_cp/${cp}`);
-    if (!res.ok) throw new Error('hckdrk_' + res.status);
-    const arr = await res.json();
-    const valid = Array.isArray(arr)
-      ? arr.filter(i => i && !i.error && i.response && i.response.estado)
-      : [];
-    if (valid.length > 0) {
-      const rows = valid.map(i => ({
-        colonia:   i.response.asentamiento || '',
-        municipio: i.response.municipio    || '',
-        estado:    i.response.estado       || '',
-        tipo:      i.response.tipo_asentamiento || '',
-      }));
-      renderRows(rows);
-      return;
-    }
-    throw new Error('hckdrk_empty');
-  } catch (_) {
-    spinner.style.display = 'none';
-    status.textContent = '⚠ No se encontró información para ese código postal.';
+  if (spinner) spinner.style.display = 'none';
+  if (!rows || rows.length === 0) {
+    status.textContent = '⚠ No se encontró el código postal. Verifica e intenta de nuevo.';
     status.style.color = 'var(--red)';
+    return;
   }
+
+  estadoEl.value = rows[0].estado;
+  munEl.value    = rows[0].municipio;
+  const saved    = state.user?.colonia || '';
+  rows.forEach(({ colonia, tipo }) => {
+    if (!colonia) return;
+    const opt       = document.createElement('option');
+    opt.value       = colonia;
+    opt.textContent = tipo ? `${colonia} (${tipo})` : colonia;
+    if (colonia === saved) opt.selected = true;
+    colSel.appendChild(opt);
+  });
+  if (!saved && colSel.options.length > 1) colSel.selectedIndex = 1;
+  results.style.display = 'block';
+  const n = colSel.options.length - 1;
+  status.textContent = `✓ ${n} colonia${n !== 1 ? 's' : ''} · ${rows[0].municipio}, ${rows[0].estado}`;
+  status.style.color = 'var(--green)';
 }
 
 // ── Edit Profile ──────────────────────────────────────────────────────────
@@ -4133,17 +4409,17 @@ async function saveEditProfile() {
     const esPrimerVez = perfilAhora && !state.user.perfil_completo;
 
     if (esPrimerVez) {
-      // +30 minutos WiFi por completar perfil (una sola vez)
+      // +5 minutos WiFi por completar perfil (una sola vez)
       state.rewards.push({
         type:     'wifi',
-        minutes:  30,
+        minutes:  5,
         label:    'Perfil completo',
         source:   'profile_bonus',
         earnedAt: Date.now()
       });
       state.user.perfil_completo = true;
       sincronizarWifiSupabase();
-      showToast('🎉 ¡+30 minutos por completar tu perfil!');
+      showToast('🎉 ¡+5 minutos por completar tu perfil!');
     }
 
     await _db.from('usuarios').update({
@@ -4290,6 +4566,7 @@ async function bizAutoLogin() {
     name:       data.nombre,
     category:   data.categoria,
     website:    data.sitio_web,
+    logo_url:   data.logo_url   || null,
     postal:     data.codigo_postal,
     colonia:    data.colonia,
     municipio:  data.municipio,
@@ -4349,6 +4626,7 @@ async function doBizLogin() {
     name:       data.nombre,
     category:   data.categoria,
     website:    data.sitio_web,
+    logo_url:   data.logo_url   || null,
     postal:     data.codigo_postal,
     colonia:    data.colonia,
     municipio:  data.municipio,
@@ -4375,7 +4653,545 @@ async function doBizLogin() {
   openBizDashboard();
 }
 
-// ── Biz postal code lookup (same SEPOMEX sources as user profile) ──────────
+// ── _fetchCP: lookup CP con dataset local + APIs externas ──────────────────
+// Orden: 1) Dataset local (instantáneo)  2) API hckdrk  3) API icalialabs
+// El dataset local cubre los CPs más usados de Tabasco y ciudades principales
+const _CP_LOCAL = {
+  "86000":{"m":"Centro","e":"Tabasco","c":["Portal del Agua", "Villahermosa Centro", "Diroga Premier"]},
+  "86010":{"m":"Centro","e":"Tabasco","c":["Medellín y Pigua 1ra. Sección", "Fideicomiso Ciudad Industrial"]},
+  "86017":{"m":"Centro","e":"Tabasco","c":["Indeco Unidad", "Residencial Real del Norte", "San Carlos Real de Palmas", "El Triángulo", "La Pigua", "Jardines Del Sol", "Cosmos", "Las Garzas", "San Ángel"]},
+  "86018":{"m":"Centro","e":"Tabasco","c":["INFONAVIT"]},
+  "86019":{"m":"Centro","e":"Tabasco","c":["Roberto Madrazo Pintado Ciudad Industrial", "Insurgentes", "Villa de las Flores", "Lagunas", "Olmeca", "Vicente Guerrero", "Francisco Villa", "Lagunas de San José", "Privada de Lagunas del Maurel"]},
+  "86020":{"m":"Centro","e":"Tabasco","c":["El Recreo", "Framboyanes"]},
+  "86025":{"m":"Centro","e":"Tabasco","c":["Universidad Autónoma de Tabasco"]},
+  "86026":{"m":"Centro","e":"Tabasco","c":["Privada Golondrinas", "Villa de las Palmas", "Valle Marino", "Las Torres"]},
+  "86027":{"m":"Centro","e":"Tabasco","c":["Jardines de Villahermosa"]},
+  "86029":{"m":"Centro","e":"Tabasco","c":["José María Pino Suárez", "Tierra Colorada", "Kedros", "Los Sauces", "Kante", "Kuxal Residencial"]},
+  "86030":{"m":"Centro","e":"Tabasco","c":["Bonanza", "Heriberto Kehoe Vicent", "Oropeza", "Prados de Villahermosa", "Residencial Los Ángeles", "Residencial Flamingos", "Nueva Imagen", "Bosques de Villahermosa", "Nances"]},
+  "86035":{"m":"Centro","e":"Tabasco","c":["Galaxia/tabasco 2000", "Paseos Del Usumacinta", "Galaxia", "Villa de los Ríos", "Real de Minas", "Los Ríos", "Multiochenta", "Villas Del Campestre", "Club de Lago", "Real de Tabasco", "La Gran Villa"]},
+  "86037":{"m":"Centro","e":"Tabasco","c":["Club Campestre", "Parque Tabasco", "La Choca"]},
+  "86038":{"m":"Centro","e":"Tabasco","c":["Carrizal", "Las Giraldas"]},
+  "86040":{"m":"Centro","e":"Tabasco","c":["Adolfo López Mateos", "Florida", "Jesús García", "Lago Ilusiones", "Lidia Esther Mónica de Portilla", "Magisterial"]},
+  "86049":{"m":"Centro","e":"Tabasco","c":["Villahermosa (Cap. P. A. Carlos Rovirosa)"]},
+  "86050":{"m":"Centro","e":"Tabasco","c":["José Narciso Rovirosa", "Lindavista", "Loma Bonita", "Loma Linda", "Militar", "Residencial Paseo de las Palmas", "Álvaro Obregón"]},
+  "86059":{"m":"Centro","e":"Tabasco","c":["Periodista"]},
+  "86060":{"m":"Centro","e":"Tabasco","c":["Casa Blanca 1a Sección", "Brisas Del Grijalva", "Fovissste Casa Blanca", "Casa Blanca 2a Sección"]},
+  "86068":{"m":"Centro","e":"Tabasco","c":["Gaviotas Norte Sector Popular", "Gaviotas Norte", "La Manga II", "La Manga III", "Cedros"]},
+  "86069":{"m":"Centro","e":"Tabasco","c":["La Manga I"]},
+  "86070":{"m":"Centro","e":"Tabasco","c":["Nueva Villahermosa"]},
+  "86079":{"m":"Centro","e":"Tabasco","c":["Arboledas"]},
+  "86080":{"m":"Centro","e":"Tabasco","c":["Gil y Sáenz (El Águila)", "Reforma"]},
+  "86090":{"m":"Centro","e":"Tabasco","c":["Guayabal", "Gaviotas Sur", "Municipal", "Gaviotas Sur Sector Armenia", "Gaviotas Sur (El Monal)"]},
+  "86095":{"m":"Centro","e":"Tabasco","c":["Las Brisas"]},
+  "86096":{"m":"Centro","e":"Tabasco","c":["El Parque"]},
+  "86097":{"m":"Centro","e":"Tabasco","c":["Los Tulipanes"]},
+  "86098":{"m":"Centro","e":"Tabasco","c":["Mayito"]},
+  "86099":{"m":"Centro","e":"Tabasco","c":["Triunfo La Manga II", "Triunfo La Manga III", "Triunfo la Manga I"]},
+  "86100":{"m":"Centro","e":"Tabasco","c":["Atasta de Serra", "José Colomo", "Residencial Bugambilias", "Madeiras", "Macuilis", "Privada Alcatraces", "Residencial Villas del Sol", "Brisa del Usumacinta"]},
+  "86107":{"m":"Centro","e":"Tabasco","c":["Aurora", "Tucanes las Quintas"]},
+  "86108":{"m":"Centro","e":"Tabasco","c":["Los Pinos", "El Espejo 1", "Residencial San Ángel", "Virginia", "Conjunto Habitacional Los Álamos", "Villa de los Trabajadores", "Carrizal", "Real Usumacinta"]},
+  "86109":{"m":"Centro","e":"Tabasco","c":["El Espejo 2", "La Joya", "Villas Del Bosque"]},
+  "86120":{"m":"Centro","e":"Tabasco","c":["Guadalupe Borja"]},
+  "86125":{"m":"Centro","e":"Tabasco","c":["José Pagés Llergo"]},
+  "86126":{"m":"Centro","e":"Tabasco","c":["Nueva Invitab", "La Isla", "Carlos A Madrazo", "Islas Del Mundo", "Santa Elena", "Benito Juárez", "Villa las Torres", "Manuel Andrade Díaz"]},
+  "86127":{"m":"Centro","e":"Tabasco","c":["Estrellas de Buenavista", "Residencial del Río", "San Miguel", "Los Sauces Residencial", "Terranova", "Miguel Hidalgo 2da. Sección (La Guaira)", "Río Viejo 1a Sección", "Río Viejo 2da. Sección", "Río Viejo 3ra. Sección", "Miguel Hidalgo", "Olimpo", "Residencial Río Viejo", "Privada La Mandarina", "La Ceiba", "Chichicaste", "Real del Valle", "Jardines de Buenavista", "Bonampak", "Los Gansos"]},
+  "86129":{"m":"Centro","e":"Tabasco","c":["Cotip"]},
+  "86130":{"m":"Centro","e":"Tabasco","c":["Artesanos INFONAVIT", "Villa de los Arcos", "Palmitas"]},
+  "86137":{"m":"Centro","e":"Tabasco","c":["Vista Alegre"]},
+  "86140":{"m":"Centro","e":"Tabasco","c":["18 de Marzo", "Las Delicias", "Conjunto Habitacional Revolución"]},
+  "86143":{"m":"Centro","e":"Tabasco","c":["Privanza del Campo", "Santa Teresa", "Carlos A. Madrazo", "Ixtacomitán 1ra. Sección", "América", "Palma Real", "Ángeles Ixtacomitan", "Los Mezquites"]},
+  "86144":{"m":"Centro","e":"Tabasco","c":["Ónix", "Cumbres", "Ixtacomitán 4ta. Sección", "Ixtacomitán 2da. Sección", "Las Huertas", "Hacienda Esmeralda", "Las Lomas"]},
+  "86149":{"m":"Centro","e":"Tabasco","c":["Nueva Pensiones"]},
+  "86150":{"m":"Centro","e":"Tabasco","c":["Punta Brava", "Tamulte de las Barrancas", "Jardines Del Sur I y II", "Santa Karla II"]},
+  "86153":{"m":"Centro","e":"Tabasco","c":["Haciendas Residencial y Club Deportivo", "Sabina", "Popular Pedro C Colorado", "Lomas Del Dorado", "Real del Angel", "Ixtacomitán 3ra. Sección", "El Edén", "Real de Sabina", "Paso Real", "Real de San Jorge", "San Jorge III", "Edén Premier", "San José"]},
+  "86160":{"m":"Centro","e":"Tabasco","c":["Del Bosque", "Sánchez Magallanes"]},
+  "86167":{"m":"Centro","e":"Tabasco","c":["Villa las Fuentes"]},
+  "86168":{"m":"Centro","e":"Tabasco","c":["Pino Suárez"]},
+  "86169":{"m":"Centro","e":"Tabasco","c":["Pensiones"]},
+  "86170":{"m":"Centro","e":"Tabasco","c":["Fovissste 2a Etapa", "Loma Diamante", "Centrópolis", "Colonial Villahermosa", "Villa Brisa", "Militar", "Real Del Sur", "Plutarco Elías Calles (Cura Hueso)", "Plaza Jardín", "La Gloria", "Blancas Mariposas", "Palmeiras", "Residencial Los Robles", "Loma Real"]},
+  "86179":{"m":"Centro","e":"Tabasco","c":["Plaza Villahermosa"]},
+  "86180":{"m":"Centro","e":"Tabasco","c":["Fovissste 1a Etapa", "Guadalupe", "La Ceiba", "Orquidea"]},
+  "86189":{"m":"Centro","e":"Tabasco","c":["Deportiva Residencial"]},
+  "86190":{"m":"Centro","e":"Tabasco","c":["Residencial Esmeralda", "Marcos Buendia", "Primero de Mayo", "El Amate", "España"]},
+  "86193":{"m":"Centro","e":"Tabasco","c":["La Providencia (La Majahua)", "Parrilla 3ra. Sección (La Providencia)", "Plutarco Elías Calles (La Majahua)"]},
+  "86200":{"m":"Jalpa de Méndez","e":"Tabasco","c":["La Hacienda", "La Resurrección", "Amatitán", "Jalpa de Mendez Centro", "Enrique González Pedrero", "Guadalupe", "La Candelaria", "San Luis", "Santa Ana", "Tomás Garrido Canabal (San José)"]},
+  "86203":{"m":"Jalpa de Méndez","e":"Tabasco","c":["El Río", "La Cruz", "Jalupa", "Tierras Peleadas (Tierras Amigas)"]},
+  "86205":{"m":"Jalpa de Méndez","e":"Tabasco","c":["Rivera Alta", "Santuario 1ra. Sección", "Santuario 2da. Sección"]},
+  "86206":{"m":"Jalpa de Méndez","e":"Tabasco","c":["Tierra Adentro 2da. Sección", "Tierra Adentro 1ra. Sección", "Santa Ana (El Río)", "La Concepción", "Tierra Adentro 3ra. Sección (El Vigía)"]},
+  "86207":{"m":"Jalpa de Méndez","e":"Tabasco","c":["Vicente Guerrero 1ra. Sección", "Vicente Guerrero 2da. Sección", "El Juncal", "Santa Lucía", "San Nicolás", "San Hipólito", "Nabor Cornelio Álvarez", "El Púlpito"]},
+  "86208":{"m":"Jalpa de Méndez","e":"Tabasco","c":["La Pera", "Hermenegildo Galeana 1ra. Sección", "Hermenegildo Galeana 2da. Sección", "Benito Juárez 3ra. Sección", "Huapacal 1ra. Sección", "Benito Juárez 1ra. Sección", "Benito Juárez 2da. Sección", "Boquiapa", "Chacalapa 1ra. Sección", "Chacalapa 2da. Sección (San Manuel)", "Huapacal 2da. Sección (Punta Brava)", "El Carmen"]},
+  "86209":{"m":"Jalpa de Méndez","e":"Tabasco","c":["El Mango", "El Mango de Ayapa", "Iquinuapa", "Ayapa", "Gregorio Méndez", "Pueblo Viejo", "Soyataco", "Iquinuapa (El Clavo)", "La Trinidad", "El Carmen (La Ensenada)"]},
+  "86214":{"m":"Jalpa de Méndez","e":"Tabasco","c":["El Recreo", "Mecoacán 2da. Sección (San Lorenzo)", "El Novillero"]},
+  "86215":{"m":"Jalpa de Méndez","e":"Tabasco","c":["Nicolás Bravo"]},
+  "86216":{"m":"Jalpa de Méndez","e":"Tabasco","c":["Mecoacán", "Reforma 1ra. Sección", "El Campo Petrolero Mecoacán", "Reforma 3ra. Sección (El Guano)", "Reforma 2da. Sección (Santa María)", "La Ceiba", "El Carmen", "San Gregorio"]},
+  "86220":{"m":"Nacajuca","e":"Tabasco","c":["Rivera Alta", "Simón Bolívar", "La Flor de Nacajuca", "Nacajuca", "17 de Julio", "El Carmen", "Nacaxuxuca 2a Secc", "Nacaxuxuca 1a Secc"]},
+  "86230":{"m":"Nacajuca","e":"Tabasco","c":["Mazateupa", "Tapotzingo", "Tucta"]},
+  "86233":{"m":"Nacajuca","e":"Tabasco","c":["Tecoluta 2da. Sección", "San Isidro 2da. Sección", "Guaytalpa", "Tecoluta 1ra. Sección", "San Simón", "San Isidro 1ra. Sección", "San José Pajonal"]},
+  "86235":{"m":"Nacajuca","e":"Tabasco","c":["Isla Guadalupe", "Chicozapote", "Oxiacaque", "El Sitio", "El Chiflón", "El Pastal"]},
+  "86236":{"m":"Nacajuca","e":"Tabasco","c":["Sandial", "Banderas (Guatacalca 2da. Sección)", "El Cometa"]},
+  "86237":{"m":"Nacajuca","e":"Tabasco","c":["Corriente 2da. Sección", "Guatacalca", "La Cruz de Nacajuca", "Belén", "Corriente 1ra. Sección", "Olcuatitán", "El Zapote", "La Loma", "La Cruz de Olcuatitán"]},
+  "86238":{"m":"Nacajuca","e":"Tabasco","c":["Cantemoc 2da. Sección", "Cantemoc 1ra. Sección", "Chicozapote"]},
+  "86240":{"m":"Nacajuca","e":"Tabasco","c":["Arroyo", "Taxco", "Vainilla", "Salvador Allende"]},
+  "86243":{"m":"Nacajuca","e":"Tabasco","c":["El Hormiguero", "El Guásimo", "Jiménez"]},
+  "86244":{"m":"Nacajuca","e":"Tabasco","c":["Ferlles Nuevo Campestre", "Samarkanda"]},
+  "86245":{"m":"Nacajuca","e":"Tabasco","c":["Arroyo San Cipriano", "Huatacalca", "Amatón", "Arena", "Arroyo", "El Tigre", "Lomitas", "Saloya 1ra. Sección", "El Dorado"]},
+  "86246":{"m":"Nacajuca","e":"Tabasco","c":["Libertad", "Libertad 2da. Sección", "Palmira", "Real Campestre", "Carlos Alberto Madrazo (El Vivero)", "Entreceibas", "Bosque de Saloya", "La Selva", "Benito Juárez", "Manuel Buendía Téllez Girón", "La Pera", "Tabasco I", "Tabasco II", "Brisas del Carrizal", "Paseos de La Primavera", "Aparceros"]},
+  "86247":{"m":"Nacajuca","e":"Tabasco","c":["América", "Residencial Mediterráneo", "Europa", "El Cedro", "Privada Real del Cedro", "Pomoca Valle Real", "Las Terrazas", "Residencial Los Bosques", "Allegro", "Antara", "Saloya 2da. Sección", "Corralillo", "Pomoca", "Tenerife", "Quintas del Bosque", "Los Naranjos", "Guayacan"]},
+  "86250":{"m":"Centro","e":"Tabasco","c":["Buena Vista 2da. Sección", "Macultepec", "Tamulté de las Sabanas", "Tocoal", "El Novillo", "Conjunto Habitacional Tercer Milenio"]},
+  "86253":{"m":"Centro","e":"Tabasco","c":["Estancia", "El Alambrado", "Torno Largo Estancia (El Manguito)", "Aniceto", "La Loma"]},
+  "86254":{"m":"Centro","e":"Tabasco","c":["García", "Miramar", "Rovirosa", "La Manga", "La Ceiba", "Buena Vista 1a Sección"]},
+  "86255":{"m":"Centro","e":"Tabasco","c":["Acachapan y Colmena 4ta. Sección", "Acachapan y Colmena 5ta. Sección", "Buena Vista 3ra. Sección (Boca de Escoba)"]},
+  "86256":{"m":"Centro","e":"Tabasco","c":["Aztlán 4ta. Sección (Corcho y Chilapilla)"]},
+  "86257":{"m":"Centro","e":"Tabasco","c":["Aztlán 5ta. Sección (Palomillal)"]},
+  "86258":{"m":"Centro","e":"Tabasco","c":["El Espino"]},
+  "86260":{"m":"Centro","e":"Tabasco","c":["Torno Largo 1ra. Sección", "Gaviotas Sur (El Cedral)", "Gaviotas Sur (El Chiflón)", "Torno Largo 2da. Sección", "Torno Largo 3ra. Sección (Sabanilla)"]},
+  "86265":{"m":"Centro","e":"Tabasco","c":["Altozano", "Coronel Traconis 2da. Sección (El Zapote)", "Coronel Traconis (Guerrero 3ra. Sección)", "Coronel Traconis (San Francisco 4ta. Sección)", "Coronel Traconis (San Diego 5ta. Sección)", "Coronel Traconis 1ra. Sección (La Isla)"]},
+  "86266":{"m":"Centro","e":"Tabasco","c":["Ribera de las Raíces", "El Censo"]},
+  "86270":{"m":"Centro","e":"Tabasco","c":["Tierra Amarilla 3ra. Sección", "Rincón Azul", "Jolochero 2da. Sección", "Medellín y Madero 2da. Sección", "Ocuiltzapotlán", "Tierra Amarilla 1ra. Sección", "Lomas del Encanto", "Isset", "Ocuitzapotlán Dos", "Las Rosas", "Lomas de Ocuiltzapotlan", "Paso Real de La Victoria", "Los Ángeles", "Reforma", "Villa Unión", "La Ceiba", "Carlos Pellicer Camara", "Tierra Amarilla 2da. Sección", "Jolochero (Boca de Culebra)", "Francisco I. Madero 1ra. Sección", "Medellín y Madero 3ra. Sección", "Medellín y Madero 4ta. Sección", "Colinas de Santo Domingo", "Santa Isabel", "Real de Diamante"]},
+  "86273":{"m":"Centro","e":"Tabasco","c":["Barrancas y Amate 3ra. Sección", "Miraflores 3ra. Sección", "El Corozal", "Barrancas y Amate 2da. Sección", "Miraflores 1ra. Sección (Arroyo Grande)", "Miraflores 2da. Sección", "Miraflores 2da. Sección (Zapotillo)", "Miraflores 1ra. Sección"]},
+  "86274":{"m":"Centro","e":"Tabasco","c":["Cocoyol (Socialista)", "Sabanas Nuevas", "Ismate y Chilapilla 1ra. Sección", "Chiquiguao 1ra. Sección", "Ismate y Chilapilla 2da. Sección", "Ismate y Chilapilla 2da. Sección Jahuactillo", "La Vuelta (La Jagua)", "Chacté", "Chiquiguao 2da. Sección (Chiquiguaíto)", "Ismate y Chilapilla 1ra. Sección (San Antonio)", "Las Matillas 4ta. Sección (San Antonio)", "Las Matillas 4ta. Sección"]},
+  "86275":{"m":"Centro","e":"Tabasco","c":["El Bajío", "Dos Montes", "Barrancas y Guanal González", "La Palma", "La Cruz del Bajío", "Barrancas y Guanal López Portillo", "Barrancas y Guanal Tintillo", "La Manga 2da. Sección (El Jobal)", "Pajonal"]},
+  "86276":{"m":"Centro","e":"Tabasco","c":["San Felipe de Jesús", "El Zapotal (La Llave)", "Medellín y Pigua 3ra. Sección", "Medellín y Pigua 2da. Sección", "Constitución", "El Zapotal", "Lagartera 1ra. Sección", "Lagartera 2da. Sección", "Medellín y Pigua 4ta. Sección (El Aguacate)", "La Huerta Residencial"]},
+  "86277":{"m":"Centro","e":"Tabasco","c":["Acachapan y Colmena 3ra. Sección", "Acachapan y Colmena 2da. Sección (La Arena)", "Jornaleros y Aparceros (Pajaritos)", "Acachapan y Colmena 2da. Sección (El Maluco)"]},
+  "86278":{"m":"Centro","e":"Tabasco","c":["Aztlán 1ra. Sección", "Aztlán 1ra. Sección (La Piedad)", "Aztlán 1ra. Sección (Sector Majahual)", "Boca de Guanal", "Boca de Aztlán 2da. Sección", "Aztlán 3ra. Sección (Jahuacte)", "Aztlán 2da. Sección el Cuy"]},
+  "86280":{"m":"Centro","e":"Tabasco","c":["La Libertad", "Buena Vista Río Nuevo 1ra. Sección", "Corregidora Ortiz 1ra. Sección", "Corregidora Ortiz 3ra. Sección (San Pedrito)", "Corregidora Ortiz 5ta. Sección", "González 1ra. Sección", "González 2da. Sección", "González 3ra. Sección", "Luis Gil Pérez", "Pablo L Sidar (Miramar)", "Plátano y Cacao 1ra. Sección", "Plátano y Cacao 2da. Sección (La Isla)", "Plátano y Cacao 3ra. Sección", "Corregidora Ortiz 2da. Sección", "Jesús Antonio Sibilla Zurita", "Buena Vista Río Nuevo 4ta. Sección", "Corregidora Ortiz 4ta. Sección", "Plátano y Cacao 4ta. Sección", "Hacienda Buena Vista", "Joyas de Buena Vista", "Lomas de Bella Vista"]},
+  "86281":{"m":"Centro","e":"Tabasco","c":["Alfa y Omega", "Acachapan y Colmena 1ra. Sección"]},
+  "86283":{"m":"Centro","e":"Tabasco","c":["Guineo 2da. Sección", "Estancia Vieja 1ra. Sección", "Guineo 1ra. Sección", "Río Tinto 1ra. Sección", "Buena Vista Río Nuevo 2da. Sección", "Buena Vista Río Nuevo 3ra. Sección", "Estancia Vieja 2da. Sección", "González 4ta. Sección", "Pablo L. Sidar (La Aurora)", "Río Tinto 2da. Sección", "Río Tinto 3ra. Sección"]},
+  "86284":{"m":"Centro","e":"Tabasco","c":["Campestre Paseo de la Sierra", "La Luna", "Los Ángeles de Parrilla", "Lomas de Esquipulas", "Los Macayos", "Campestre Parrilla", "Casas Para Todos", "Espinoza Galindo", "Fovissste Kilómetro 9", "Guapinol", "INFONAVIT Parrilla", "Parrilla", "Policía y Transito", "La Unión hace la Fuerza", "Parrilla 4ta. Sección (Los Acosta)", "Hacienda Del Sol", "Villa Floresta", "El Árbol", "Chilam Balam", "Jardines de Huapinol", "Santa Cecilia (los Músicos)", "Santa Fe", "Juchimán", "Popular Manuel Silva"]},
+  "86287":{"m":"Centro","e":"Tabasco","c":["Zafiro", "Puerta Grande", "Puerta de Hierro", "Valle del Jaguar", "Emiliano Zapata", "Jardines del Country", "Puerta Madero", "Anacleto Canabal 3ra. Sección (Constitución)", "Dieciséis de Septiembre", "San Marcos", "Abrika Residencial", "Palmarena Residencial", "Sotavento", "Amena Contry", "Lázaro Cárdenas 1ra. Sección", "Anacleto Canabal 1ra. Sección", "Flores del Trópico", "El Country", "Santa Catalina (San Marcos)", "Lázaro Cárdenas 2a Sección", "Anacleto Canabal 2da. Sección", "Anacleto Canabal 3ra. Sección", "Anacleto Canabal 4ta. Sección", "Lázaro Cárdenas 2da. Sección (21 de Marzo)", "Puerta Real", "Las Hadas", "Sol Campestre", "Puerta Azul", "Parque Logístico Industrial Tabasco", "Puerta Magna", "Hacienda Casa Blanca"]},
+  "86288":{"m":"Centro","e":"Tabasco","c":["Clara Córdova Moran", "Lomas del Palmar", "El Rosario y el Quemado", "La Lima", "Estanzuela 1ra. Sección", "El Manzano", "Estanzuela 2da. Sección", "Playas del Rosario (Subteniente García)", "Parrilla II", "Las Mercedes", "El Almendro", "Villa los Claustros", "Revolución", "El Paraíso", "Parrilla 5ta. Sección (El Carmen)", "Topacio", "San Antonio", "Santa Rita", "Las Margaritas", "La Venta", "El Encanto", "27 de Octubre", "Gracias México", "San Manuel", "Monteceibas"]},
+  "86289":{"m":"Centro","e":"Tabasco","c":["La Isla", "Pueblo Nuevo de las Raíces", "Agraria (La Isla)", "El Recreo"]},
+  "86290":{"m":"Centro","e":"Tabasco","c":["Villa el Cielo", "Tumbulushal", "Alvarado Santa Irene 1ra. Sección", "La Huasteca 1ra. Sección", "La Huasteca 2da. Sección (Alvarado la Raya)", "Bicentenario"]},
+  "86291":{"m":"Centro","e":"Tabasco","c":["Alvarado (Colima)", "Alvarado Guardacosta"]},
+  "86292":{"m":"Centro","e":"Tabasco","c":["Alvarado Jimbal", "La Victoria"]},
+  "86294":{"m":"Centro","e":"Tabasco","c":["Boquerón 1ra. Sección (San Pedro)", "Boquerón 3ra. Sección (El Guanal)", "Boquerón 4ta. Sección (Laguna Nueva)", "Ixtacomitán 5ta. Sección", "Pablo L Sidar", "Boquerón 2da. Sección (El Barquillo)", "Bosques de Araba"]},
+  "86295":{"m":"Centro","e":"Tabasco","c":["Boquerón 5ta. Sección (La Lagartera)", "Pablo L. Sidar (Guineo)"]},
+  "86297":{"m":"Centro","e":"Tabasco","c":["Alvarado Santa Irene 2da. Sección (El Taizal)"]},
+  "86298":{"m":"Centro","e":"Tabasco","c":["Hueso de Puerco"]},
+  "86300":{"m":"Comalcalco","e":"Tabasco","c":["Comalcalco Centro"]},
+  "86320":{"m":"Comalcalco","e":"Tabasco","c":["San Silverio", "Gustavo de La Fuente Dorantes", "Belén", "Tomas Garrido", "INFONAVIT", "Conjunto Habitacional Presidentes", "Palma Real", "Conjunto Habitacional Presidentes 2"]},
+  "86323":{"m":"Comalcalco","e":"Tabasco","c":["San Miguel", "Adolfo López Mateos"]},
+  "86324":{"m":"Comalcalco","e":"Tabasco","c":["Villa Maya"]},
+  "86325":{"m":"Comalcalco","e":"Tabasco","c":["Magisterial", "Ecológica Licenciado Carlos A. Madrazo Becerra"]},
+  "86330":{"m":"Comalcalco","e":"Tabasco","c":["San Francisco"]},
+  "86340":{"m":"Comalcalco","e":"Tabasco","c":["Bicentenario", "Solidaridad Nacional A C", "Magisterial 2"]},
+  "86350":{"m":"Comalcalco","e":"Tabasco","c":["Vicente Guerrero"]},
+  "86357":{"m":"Comalcalco","e":"Tabasco","c":["San Isidro", "La Esperanza", "Buenavista", "Asturias"]},
+  "86360":{"m":"Comalcalco","e":"Tabasco","c":["La Escondida", "Las Rosas", "Jorge Díaz Serrano"]},
+  "86369":{"m":"Comalcalco","e":"Tabasco","c":["Santo Domingo", "Xochimilco", "Villas de Oriente"]},
+  "86370":{"m":"Comalcalco","e":"Tabasco","c":["Santa Amalia", "Delicias"]},
+  "86380":{"m":"Comalcalco","e":"Tabasco","c":["Privada La Gema", "La Joya"]},
+  "86388":{"m":"Comalcalco","e":"Tabasco","c":["PEMEX (Cobertizo)", "Las Brisas"]},
+  "86389":{"m":"Comalcalco","e":"Tabasco","c":["Lázaro Cárdenas Del Rio", "Empleado de Confianza", "Fovissste", "Morelos"]},
+  "86400":{"m":"Huimanguillo","e":"Tabasco","c":["La Luz", "Huimanguillo Centro", "Villa Flores 1ra. Sección", "Nuevo Centro de Convivencia", "5 de Mayo", "Club Liberal", "El Torito", "Guadalupe", "Huimanguillo", "Los Ángeles", "Pedro C Colorado", "Pueblo Nuevo", "Comisión Federal de Electricidad", "La Ceiba INFONAVIT", "La Juventud", "Mastelero", "C-31 (General Francisco Villa)", "Jardines de Mezcalapa", "Los Frutales", "Magisterial", "El Desecho 1ra. Sección (Playa I)"]},
+  "86402":{"m":"Huimanguillo","e":"Tabasco","c":["Pomoca Bicentenario", "San Lázaro", "Alfa y Omega", "Ada Isabel", "Hacienda San Francisco", "Güiral y González 2da. Sección", "Poblado C-41", "Poblado C-31 Uno", "Los Pinos", "Cuitláhuac", "Las Galaxias", "El Rosario", "Mecatepec", "Monte de Oro 1a Sección", "Ocuapan", "Tecominoacan", "Río Seco y Montaña 2da. Sección", "C-41 (Licenciado Carlos A. Madrazo)", "Monte de Oro 3ra. Sección", "Río Seco y Montaña 1a Secc", "Las Pampas", "Los Naranjos 3ra. Sección", "Río Seco y Montaña 3ra. Sección"]},
+  "86403":{"m":"Huimanguillo","e":"Tabasco","c":["Pico de Oro 4ta. Sección (Pejelagarterito)", "San Fernando", "C-34 (Licenciado Benito Juárez García)", "C-26 (General Pedro C. Colorado)", "Pico de Oro 1ra. Sección", "Pico de Oro 3ra. Sección", "Tierra Colorada 2da. Sección (Silbarán)", "Tierra Colorada 3ra. Sección", "El Cabrito", "Paso de la Mina 3ra. Sección", "Paso de la Mina 2da. Sección (Barrial)"]},
+  "86406":{"m":"Huimanguillo","e":"Tabasco","c":["Río Seco y Montaña 3ra. Sección (Ampliación)", "Por la Moral de un Presidente", "Los Naranjos 4ta. Sección", "El Dorado", "José Martí", "El Puente", "Los Naranjos", "El Desecho 1a Secc", "El Desecho 2a Secc", "El Puente 1ra. Sección", "Güiral y González 1ra. Sección", "Libertad", "Los Naranjos 1a Secc", "Los Naranjos 2da. Sección", "El Puente 2da. Sección"]},
+  "86407":{"m":"Huimanguillo","e":"Tabasco","c":["Tierra Nueva 1ra. Sección (Las Palmas)", "Tierra Nueva 1a Secc", "Tierra Nueva 2da. Sección", "Laguna de los Limones", "Ostitán 1ra. Sección", "Ostitán 2da. Sección", "Villa Flores 2da. Sección"]},
+  "86409":{"m":"Huimanguillo","e":"Tabasco","c":["Agapito Domínguez Canabal", "Pedro C. Colorado 3ra. Sección", "Otra Banda 2da. Sección", "Pedro C. Colorado 1ra. Sección", "Macayo y Naranjo 3ra. Sección (San Agustín)", "Otra Banda 2a Secc", "Macayo y Naranjo 2da. Sección", "Otra Banda 1ra. Sección", "Otra Banda 3a Sección", "Macayo y Naranjo 1ra. Sección", "Samaria"]},
+  "86410":{"m":"Huimanguillo","e":"Tabasco","c":["Monte de Oro 2a Secc", "C-40 (Ernesto Aguirre Colorado)", "C-32 (Licenciado Francisco Trujillo Gurría)"]},
+  "86413":{"m":"Huimanguillo","e":"Tabasco","c":["Tres Bocas 2da. Sección (El Zapotal)", "La Ceiba 1ra. Sección", "La Ceiba 1ra. Sección (Ruiz Cortínes)", "Luis Cabrera", "El Chapo", "El Cocoite", "La Ceiba 2da. Sección"]},
+  "86414":{"m":"Huimanguillo","e":"Tabasco","c":["Zapotal 5ta. Sección", "Palo Mulato Viejo", "Zapotal San Miguel 1ra. Sección Ramal Uno", "Zapotal 1ra. Sección (San Miguel)", "Palo Mulato (Zapotal)", "El Palmar", "Cuauhtémoc", "Zapotal 4ta. Sección (Zapotalito)"]},
+  "86415":{"m":"Huimanguillo","e":"Tabasco","c":["Pejelagartero 1ra. Sección (Plataforma)", "Pejelagartero 1ra. Sección (Gpe. Victoria)", "La Vencedora", "Las Piedras", "Pejelagartero 2da. Sección (Nueva Reforma)", "Pejelagartero 1ra. Sección (Los Pinos)", "Pejelagartero 2da. Sección", "C-25 (Isidro Cortés Rueda)", "Emiliano Zapata (Chichonal de la Boyería)", "Benito Juárez 1ra. Sección", "Pejelagartero 1ra. Sección (Nuevo Progreso)", "Zapotal 3ra. Sección (El Corchal)", "Pejelagartero 1ra. Sección (Chichonal)", "Pejelagartero 1ra. Sección (El Arroyito)", "Pejelagartero 1ra. Sección (El Filero)"]},
+  "86416":{"m":"Huimanguillo","e":"Tabasco","c":["Zanapa 1a Secc", "Zanapa 2da. Sección (El Tumbo)"]},
+  "86417":{"m":"Huimanguillo","e":"Tabasco","c":["Benito Juárez 2da. Sección (Monte Alegre)", "Blasillo 1ra. Sección (Nicolás Bravo)", "Blasillo 2a Secc", "Blasillo 4a Secc"]},
+  "86418":{"m":"Huimanguillo","e":"Tabasco","c":["El Coral", "Olmeca", "La Venta", "El Salvamento", "Francisco I Madero", "Rovirosa", "El Piojo", "Nueva Esperanza 5 de Mayo", "Emporio", "Aquiles Serdán 2da. Sección (Azucenita)", "Aquiles Serdán 1ra. Sección", "El Paraíso"]},
+  "86420":{"m":"Huimanguillo","e":"Tabasco","c":["Las Granjas", "Central Fournier 1ra. Sección (El Coleto)", "Francisco Rueda"]},
+  "86421":{"m":"Huimanguillo","e":"Tabasco","c":["Paso de la Mina 1ra. Sección", "Huapacal 1a Sección"]},
+  "86423":{"m":"Huimanguillo","e":"Tabasco","c":["Huapacal 3ra. Sección", "Tres Bocas 3ra. Sección", "Ignacio Gutiérrez 5ta. Sección", "Tres Bocas 1ra. Sección", "Ignacio Gutiérrez 1ra. Sección", "Huapacal 2a Secc", "Ignacio Gutiérrez 2a Secc", "Ignacio Gutiérrez 3a Secc", "Ignacio Gutiérrez 4a Secc", "Huapacal 4ta. Sección"]},
+  "86425":{"m":"Huimanguillo","e":"Tabasco","c":["Santa Cruz", "Manuel Sánchez Mármol", "Macabil", "Unidad Modelo Sábana Larga"]},
+  "86426":{"m":"Huimanguillo","e":"Tabasco","c":["Benito Juárez", "Miguel Hidalgo y Costilla"]},
+  "86427":{"m":"Huimanguillo","e":"Tabasco","c":["Vieja Guardia Agrarista", "Estación Martínez Gaytán", "El Guanal", "Francisco Martínez Gaytán", "Las Galaxias", "Francisco Villa", "Díez de Abril", "Pedro C. Colorado", "Central Fournier 2da. Sección", "Laguna del Rosario"]},
+  "86428":{"m":"Huimanguillo","e":"Tabasco","c":["Río Pedregal", "El Sacrificio", "Santa Lucía", "Francisco I. Madero"]},
+  "86430":{"m":"Huimanguillo","e":"Tabasco","c":["José Mercedes Gamas 2da. Sección", "Economía", "Guadalupe Victoria", "José Mercedes Gamas 1ra. Sección", "Pedregal Moctezuma 1ra. Sección", "José Narciso Rovirosa", "El Sacrificio", "Pedregal Moctezuma 2da. Sección (Leyva)"]},
+  "86432":{"m":"Huimanguillo","e":"Tabasco","c":["José María Pino Suárez 1ra. Sección", "Celia González de Rovirosa", "José María Pino Suárez 2da. Sección", "Estación Zanapa", "Gregorio Méndez", "Esperanza del Bajío"]},
+  "86433":{"m":"Huimanguillo","e":"Tabasco","c":["Chicoacán", "Chicoacán (Ampliación)", "Venustiano Carranza", "Marcelino Inorrueta de la Fuente", "Tierra Nueva 4ta. Sección", "La Lucha"]},
+  "86434":{"m":"Huimanguillo","e":"Tabasco","c":["Paredón 3ra. Sección", "Paredón 1ra. Sección (La Isla)", "Santa Cecilia", "San Manuel", "Paredón 1ra. Sección", "Rafael Martínez de Escobar", "Paredón 2da. Sección (Álvaro Obregón)", "Las Giraldas", "Paredón 1ra. Sección (El Porvenir)", "Paredón 2da. Sección", "San Antonio", "San Manuel Tenerife"]},
+  "86436":{"m":"Huimanguillo","e":"Tabasco","c":["Manuel Andrade Díaz", "Cuauhtémoc y Palmira", "La Esperanza", "El Encomendero", "El Suspiro", "La Gavia", "Salvador Neme Castillo", "Roberto Madrazo Pintado", "El Complejo"]},
+  "86440":{"m":"Huimanguillo","e":"Tabasco","c":["Gilberto Flores Muñoz 2da. Sección", "Emiliano Zapata (Kilómetro 4)", "Chicoacán 1ra. Sección", "Chicoacán", "Gilberto Flores Muñoz", "Tierra Nueva 3ra. Sección", "Chontalpa (Estación Chontalpa)"]},
+  "86442":{"m":"Huimanguillo","e":"Tabasco","c":["Eduardo Alday Hernández", "Enrique Rodríguez Cano", "Francisco J. Santamaría 1ra. Sección"]},
+  "86443":{"m":"Huimanguillo","e":"Tabasco","c":["Aureo L Calles", "Gregorio Méndez Magaña", "Pedro Sánchez Magallanes", "Unión y Fuerza", "Guerrero", "Tío Moncho (Caobanal 1ra. Sección)", "Libertad Agraria", "Caobanal 1ra. Sección (La Victoria)", "Amacohíte 1ra. Sección", "José María Morelos y Pavón", "Francisco Sarabia", "Caobanal 1ra. Sección (Mezcalapa)", "Caobanal 2da. Sección (Pedro Sánchez Magallanes)"]},
+  "86444":{"m":"Huimanguillo","e":"Tabasco","c":["La Arena 2da. Sección", "Pedregalito 1ra. Sección (Vicente Guerrero)", "Amacohíte 2da. Sección", "La Arena 1ra. Sección", "Pedregalito", "José María Pino Suárez"]},
+  "86445":{"m":"Huimanguillo","e":"Tabasco","c":["Pedregal Moctezuma 1ra. Sección", "Pedregal Moctezuma 2a Secc"]},
+  "86446":{"m":"Huimanguillo","e":"Tabasco","c":["Gustavo Díaz Ordaz 3ra. Sección", "Gustavo Díaz Ordaz 2da. Sección", "Alto Amacohíte 3ra. Sección", "Malpasito", "Las Flores", "Villa de Guadalupe", "Francisco J. Mujica", "Carlos A. Madrazo", "Chimalapa 2da. Sección", "Gustavo Díaz Ordaz", "Chimalapa 1ra. Sección", "La Candelaria"]},
+  "86454":{"m":"Huimanguillo","e":"Tabasco","c":["El Abuelo", "La Florida", "La Mina", "Tierra Colorada 1a Secc", "La Trinidad", "Los Cocos"]},
+  "86456":{"m":"Huimanguillo","e":"Tabasco","c":["El Carmen", "Ignacio Allende (Chapingo)", "Miguel Alemán Valdez", "Paso Del Rosario", "El Trébol (La Estrella)", "Nuevo Progreso", "Licenciado Antonio Zamora Arrioja"]},
+  "86460":{"m":"Cárdenas","e":"Tabasco","c":["San Rafael", "Pedro Sánchez Magallanes", "Cuauhtemoczín", "El Barí 1ra. Sección", "El Barí 2da. Sección", "Ojoshal", "Coronel Andrés Sánchez Magallanes", "Paylebot", "El Yucateco (Paylebot 2da. Sección)", "Tomás Brito Lara", "Ley Federal de la Reforma Agraria (San Ramón)"]},
+  "86461":{"m":"Cárdenas","e":"Tabasco","c":["El Campo", "Chicozapote 1ra. Sección", "Chicozapote 2da. Sección (El Retiro)", "Benito Juárez (Campo Magallanes)", "La Trinidad"]},
+  "86464":{"m":"Cárdenas","e":"Tabasco","c":["El Alacrán (Manatinero)", "Sinaloa 2da. Sección (Arjona)", "Sinaloa 1ra. Sección", "El Alacrán"]},
+  "86465":{"m":"Cárdenas","e":"Tabasco","c":["Ignacio Zaragoza", "Las Calzadas", "Las Limas", "Buenavista 2da. Sección", "Las Flores (La Palma)", "Campo Nuevo", "El Capricho", "Ignacio Gutiérrez Gómez (San Felipe)", "Buenavista 1ra. Sección", "El Porvenir", "El Bronce"]},
+  "86466":{"m":"Cárdenas","e":"Tabasco","c":["Poblado C-23 General Venustiano Carranza"]},
+  "86467":{"m":"Cárdenas","e":"Tabasco","c":["El Chocho (Boca del Río)", "Islas Encantadas 1ra. Sección (El Zapote)"]},
+  "86470":{"m":"Cárdenas","e":"Tabasco","c":["Santana 2da. Sección C", "Río Seco 2da. Sección A", "Santana 1ra. Sección A", "Santana 2da. Sección A", "Santana 2da. Sección B (La Palma)", "Santana 3ra. Sección A (El Filero)"]},
+  "86471":{"m":"Cárdenas","e":"Tabasco","c":["Julián Montejo Velázquez", "El Golpe 2da. Sección (Los Patos)", "Santana 3ra. Sección B", "El Golpe", "El Mingo", "Poza Redonda 1ra. Sección", "Poza Redonda 2da. Sección", "Santuario 3ra. Sección (Piedras Negras)", "Santuario 1ra. Sección", "Santuario 2da. Sección", "Poza Redonda 3ra. Sección"]},
+  "86473":{"m":"Cárdenas","e":"Tabasco","c":["Poblado C-09 Licenciado Francisco I. Madero", "Santana 4ta. Sección"]},
+  "86474":{"m":"Cárdenas","e":"Tabasco","c":["Tío Moncho", "Francisco Trujillo Gurría", "Las Coloradas 1ra. Sección", "Las Coloradas 2da. Sección B", "Las Coloradas 2da. Sección (Ampliación las Aldeas)"]},
+  "86475":{"m":"Cárdenas","e":"Tabasco","c":["Encrucijada 3ra. Sección (Las Calzadas)", "Azucenita 1ra. Sección B", "Poza Redonda 4ta. Sección (Rincón Brujo)", "Encrucijada 2da. Sección (Los García)", "Azucena 1ra. Sección", "Naranjeño 1ra. Sección (Colonia la Fe)", "Encrucijada 1ra. Sección Rincón Brujo", "Azucena 4ta. Sección (Torno Alegre)", "Encrucijada 5ta. Sección", "Encrucijada 4ta. Sección B (La Lucha)", "Azucena 5ta. Sección (El Apompal)", "Azucena 6ta. Sección", "Santuario 4ta. Sección"]},
+  "86476":{"m":"Cárdenas","e":"Tabasco","c":["Poblado C-10 General Lázaro Cárdenas del Río"]},
+  "86477":{"m":"Cárdenas","e":"Tabasco","c":["Azucena 7ma. Sección (El Lechugal)", "Azucena 2da. Sección", "Naranjeño 3ra. Sección", "Azucena 3ra. Sección (El Triunfo)"]},
+  "86478":{"m":"Cárdenas","e":"Tabasco","c":["El Jobo (Punta Brava)", "Congregación Reyes Heroles", "Poblado C-11 José María Morelos y Pavón", "Nueva Esperanza", "Naranjeño 2da. Sección A", "Poblado C-14 General Plutarco Elías Calles"]},
+  "86480":{"m":"Cárdenas","e":"Tabasco","c":["Poblado C-22 Licenciado José María Pino Suárez"]},
+  "86483":{"m":"Cárdenas","e":"Tabasco","c":["Poblado C-21 Licenciado Benito Juárez García", "Poblado C-15 Adolfo López Mateos"]},
+  "86484":{"m":"Cárdenas","e":"Tabasco","c":["Poblado C-16 General Emiliano Zapata", "Poblado C-20 Miguel Hidalgo y Costilla"]},
+  "86485":{"m":"Cárdenas","e":"Tabasco","c":["Ingenio Presidente Benito Juárez", "Poblado C-28 Coronel Gregorio Méndez Magaña", "Poblado C-27 Ingeniero Eduardo Chávez Ramírez"]},
+  "86486":{"m":"Cárdenas","e":"Tabasco","c":["Las Nuevas Esperanzas", "Las Esperanzas", "Juan Escutia", "Poblado C-33 20 de Noviembre"]},
+  "86490":{"m":"Cárdenas","e":"Tabasco","c":["Luis Donaldo Colosio Murrieta", "Celia González de Rovirosa", "El Carmen", "El Carrizal", "Río Seco 2da. Sección (Norte 10)", "Miguel Hidalgo 2da. Sección B (La Natividad)", "Río Seco 2da. Sección B", "Independencia", "La Orza", "Santa Rosalía (Miguel Hidalgo 2da. Sección)", "Río Seco 1ra. Sección", "Santa Rosalía", "Río Seco 2da. Sección C", "Miguel Hidalgo 1ra. Sección", "Zapotal 1ra. Sección", "Santa Maria de Guadalupe", "De los Santos", "Rubén Jaramillo Lazo", "Villa San Miguel"]},
+  "86493":{"m":"Cárdenas","e":"Tabasco","c":["Poblado C-17 Independencia", "Santana 5ta. Sección (El Espino)", "Zapotal 2da. Sección", "Poblado C-29 General Vicente Guerrero", "Zapotal 3ra. Sección", "Miguel Hidalgo Zapotal 2da. Sección"]},
+  "86495":{"m":"Cárdenas","e":"Tabasco","c":["Arroyo Hondo (San Rosendo)", "Santa Isidra", "Arroyo Hondo 2da. Sección Santa Teresa B", "Arroyo Hondo 1ra. Sección (Santa Teresa A)", "El Parnaso"]},
+  "86500":{"m":"Cárdenas","e":"Tabasco","c":["Cárdenas Centro", "El Gringo"]},
+  "86520":{"m":"Cárdenas","e":"Tabasco","c":["Alameda", "Melchor Ocampo 2a Secc"]},
+  "86523":{"m":"Cárdenas","e":"Tabasco","c":["Los Cañales"]},
+  "86524":{"m":"Cárdenas","e":"Tabasco","c":["Río Seco"]},
+  "86527":{"m":"Cárdenas","e":"Tabasco","c":["El Suspiro"]},
+  "86528":{"m":"Cárdenas","e":"Tabasco","c":["Santa Rita INFONAVIT"]},
+  "86529":{"m":"Cárdenas","e":"Tabasco","c":["Nuevo Progreso"]},
+  "86530":{"m":"Cárdenas","e":"Tabasco","c":["Carlos Pellicer Cámara (SAHOP)", "Bajío Loma Bonita INFONAVIT", "Sahop", "INFONAVIT Loma Bonita"]},
+  "86533":{"m":"Cárdenas","e":"Tabasco","c":["El Toloque"]},
+  "86534":{"m":"Cárdenas","e":"Tabasco","c":["Tabscoob", "Vereda"]},
+  "86535":{"m":"Cárdenas","e":"Tabasco","c":["Guadalupe"]},
+  "86540":{"m":"Cárdenas","e":"Tabasco","c":["San Antonio", "Puerto Rico", "Los Morales", "Calzada"]},
+  "86543":{"m":"Cárdenas","e":"Tabasco","c":["Calzada 1ra. Sección Norte A"]},
+  "86544":{"m":"Cárdenas","e":"Tabasco","c":["Carlos Alberto Wilson Gómez", "Cárdenas"]},
+  "86545":{"m":"Cárdenas","e":"Tabasco","c":["Valle Azul", "Melchor Ocampo", "Roger Falconi Vera", "Nueva Esperanza", "Lázaro Cárdenas del Río (Agua Sol)"]},
+  "86546":{"m":"Cárdenas","e":"Tabasco","c":["La Alianza", "Habanero 2da. Sección (El Castaño)", "Cárdenas 2da. Sección"]},
+  "86547":{"m":"Cárdenas","e":"Tabasco","c":["5 de Mayo", "La Esperanza", "Calzada 2da. Sección"]},
+  "86550":{"m":"Cárdenas","e":"Tabasco","c":["Empleados del CSAT", "Campamento SARH", "Ceiba", "7 de Octubre"]},
+  "86553":{"m":"Cárdenas","e":"Tabasco","c":["Deportiva INFONAVIT", "Jacinto López", "Santa María Periférico"]},
+  "86555":{"m":"Cárdenas","e":"Tabasco","c":["Sección 10 de Azucareros", "Nueva Zelandia (El Ingenio)"]},
+  "86556":{"m":"Cárdenas","e":"Tabasco","c":["La Península", "Benito Juárez (La Playita)", "Paso y Playa"]},
+  "86560":{"m":"Cárdenas","e":"Tabasco","c":["Pueblo Nuevo"]},
+  "86564":{"m":"Cárdenas","e":"Tabasco","c":["El Palmar"]},
+  "86570":{"m":"Cárdenas","e":"Tabasco","c":["Los Reyes Loma Alta"]},
+  "86573":{"m":"Cárdenas","e":"Tabasco","c":["Santa Catalina", "Emiliano Zapata"]},
+  "86574":{"m":"Cárdenas","e":"Tabasco","c":["Santa Cruz", "Villa Esmeralda", "San Pedro de los Cedros"]},
+  "86576":{"m":"Cárdenas","e":"Tabasco","c":["El Encanto"]},
+  "86577":{"m":"Cárdenas","e":"Tabasco","c":["Arroyo Hondo Abejonal"]},
+  "86580":{"m":"Cárdenas","e":"Tabasco","c":["Habanero 1ra. Sección (Venustiano Carranza)"]},
+  "86583":{"m":"Cárdenas","e":"Tabasco","c":["Habanero 1ra. Sección"]},
+  "86584":{"m":"Cárdenas","e":"Tabasco","c":["General Francisco Villa"]},
+  "86590":{"m":"Cárdenas","e":"Tabasco","c":["El Bajío 2da. Sección"]},
+  "86596":{"m":"Cárdenas","e":"Tabasco","c":["S.A.R.H.", "Prados de Cárdenas"]},
+  "86597":{"m":"Cárdenas","e":"Tabasco","c":["Zolia E. Peña Falcón", "Paso y Playa Invitab", "Petrolera"]},
+  "86598":{"m":"Cárdenas","e":"Tabasco","c":["El Manantial", "José Eduardo de Cárdenas", "Obrera", "El Bajío 1ra. Sección"]},
+  "86599":{"m":"Cárdenas","e":"Tabasco","c":["Sección 40", "Fovissste", "El Embudo Fovissste", "Jardines de Tabasco"]},
+  "86600":{"m":"Paraíso","e":"Tabasco","c":["Francisco I. Madero (Madero)", "La Unión 1ra. Sección (Amatillo)", "Las Flores 1ra. Sección", "Las Flores 2da. Sección", "Moctezuma 1ra. Sección", "Moctezuma 2da. Sección", "Moctezuma (Francisco I. Madero 3ra. Sección)", "Francisco I. Madero 2da. Sección", "Francisco I. Madero", "El Escribano", "Costa Real"]},
+  "86601":{"m":"Paraíso","e":"Tabasco","c":["Las Flores 3ra. Sección (El Cerro)"]},
+  "86602":{"m":"Paraíso","e":"Tabasco","c":["La Unión 2da. Sección"]},
+  "86603":{"m":"Paraíso","e":"Tabasco","c":["Barra de Tupilco"]},
+  "86605":{"m":"Paraíso","e":"Tabasco","c":["Paraíso Centro"]},
+  "86606":{"m":"Paraíso","e":"Tabasco","c":["El Limoncito", "El Limón", "Empleados de Confianza", "Lázaro Cárdenas", "Petrolera"]},
+  "86607":{"m":"Paraíso","e":"Tabasco","c":["Residencial Paraíso", "Privada La Ceiba", "La Ceiba", "Los Cocos", "Magisterial", "La Continuidad", "Las Palmas"]},
+  "86608":{"m":"Paraíso","e":"Tabasco","c":["Belo Horizonte", "Guadalupe", "Los Olivos", "Bahías del Sol", "Arboledas", "Carlos A Madrazo Becerra", "Fonhapo", "Los Mangos", "Primavera", "Quintín Arauz", "La Deportiva", "Hueso de Puerco (Colonia Quintín Aráuz)"]},
+  "86609":{"m":"Paraíso","e":"Tabasco","c":["El Coquito", "Las Flores", "Adalberto Santos"]},
+  "86610":{"m":"Paraíso","e":"Tabasco","c":["Puerto Ceiba", "Puerto Ceiba (Carrizal)"]},
+  "86611":{"m":"Paraíso","e":"Tabasco","c":["José María Morelos y Pavón (El Bellote)", "Libertad 1ra. Sección (El Chivero)"]},
+  "86613":{"m":"Paraíso","e":"Tabasco","c":["Nuevo Torno Largo", "Andrés García (La Isla)", "El Bellote (Miguel de la Madrid)", "Chiltepec (Sección Pénjamo)", "Chiltepec (Sección Banco)"]},
+  "86615":{"m":"Paraíso","e":"Tabasco","c":["Blancas Mariposas", "Oriente 1ra. Sección", "Oriente (San Cayetano)", "Monte Adentro"]},
+  "86616":{"m":"Paraíso","e":"Tabasco","c":["Potreritos", "Occidente (San Francisco)", "Moctezuma 3ra. Sección", "Oriente (Hormiguero)"]},
+  "86617":{"m":"Paraíso","e":"Tabasco","c":["Nicolás Bravo", "Libertad 2da. Sección", "Palestina", "Nicolás Bravo 2da. Sección (La Gloria)", "Nicolás Bravo 3ra. Sección", "Nicolás Bravo 4ta. Sección (Tilapa)", "Nicolás Bravo 5ta. Sección (Punta Brava)", "Oriente 2da. Sección (Palma Huaca)", "Campestre del Lago"]},
+  "86618":{"m":"Paraíso","e":"Tabasco","c":["Guano Solo (El Coquito)", "La Unión 3ra. Sección"]},
+  "86620":{"m":"Paraíso","e":"Tabasco","c":["Aquiles Serdán", "Chiltepec (Puerto Chiltepec)", "Chiltepec (Sección Tanque)"]},
+  "86621":{"m":"Paraíso","e":"Tabasco","c":["Aquiles Serdán"]},
+  "86630":{"m":"Comalcalco","e":"Tabasco","c":["Guayo 1ra. Sección", "Guayo 2da. Sección", "Guayo 3ra. Sección", "Emiliano Zapata 1ra. Sección", "Hermenegildo Galeana", "Lázaro Cárdenas 1ra. Sección", "Lázaro Cárdenas 3ra. Sección", "Emiliano Zapata 2da. Sección", "Ignacio Gutiérrez Gómez", "Arroyo Hondo 4ta. Sección", "Carlos Greene 3a Sección", "Carlos Greene 4a Sección", "Lázaro Cárdenas 2da. Sección (El Retiro)"]},
+  "86640":{"m":"Comalcalco","e":"Tabasco","c":["Tupilquillo", "Tecolutilla (Riberita)", "Occidente Villa Aldama", "Oriente", "Francisco I. Madero 1ra. Sección", "Francisco I. Madero 2da. Sección", "Gregorio Méndez 2da. Sección", "Gregorio Méndez 3ra. Sección", "Miguel Hidalgo", "Tecolutilla", "Reyes Hernández 1ra. Sección", "Aldama", "León Zárate 1ra. Sección", "Aldama 3ra. Sección (Huapacalito)", "Aldama 4ta. Sección (El Naranjito)", "Belisario Domínguez", "Betania", "León Zárate 2da. Sección", "Sur Aldama", "Aldama 2da. Sección (Fernando Segovia)"]},
+  "86643":{"m":"Comalcalco","e":"Tabasco","c":["Progreso Tular 1ra. Sección", "Centro Tular 1ra. Sección", "Centro Tular 2da. Sección", "José María Pino Suárez 1ra. Sección", "José María Pino Suárez 2da. Sección", "Tránsito Tular", "Chicozapote", "Progreso Tular 2da. Sección", "José María Pino Suárez 3ra. Sección (Corinto)"]},
+  "86644":{"m":"Comalcalco","e":"Tabasco","c":["Ignacio Zaragoza 1ra. Sección", "Ignacio Zaragoza 2da. Sección", "Patastal 1ra. Sección", "Patastal 2da. Sección", "Patastal 3ra. Sección", "Tío Moncho (Urania Franyutti de Vázquez)", "Ignacio Zaragoza 4ta. Sección (San Andrés)"]},
+  "86645":{"m":"Comalcalco","e":"Tabasco","c":["Cocohital", "Ignacio Zaragoza 3ra. Sección"]},
+  "86650":{"m":"Comalcalco","e":"Tabasco","c":["Norte 1ra. Sección (San Julián)", "Norte 2da. Sección", "Occidente 1ra. Sección", "Occidente 2da. Sección", "Independencia 1ra. Sección", "Occidente 3a Sección", "Occidente 4a Sección", "San Fernando (Pueblo Nuevo)"]},
+  "86652":{"m":"Comalcalco","e":"Tabasco","c":["Zapotal 2da. Sección", "Zapotal 1ra. Sección", "Gregorio Méndez 4ta. Sección (El Santiago)", "Zapotal 3ra. Sección"]},
+  "86654":{"m":"Comalcalco","e":"Tabasco","c":["Sargento López 1ra. Sección", "Sargento López 2da. Sección (El Chuzo)", "Sargento López 3ra. Sección (San Jorge)", "Guatemalán", "Sargento López 4ta. Sección"]},
+  "86655":{"m":"Comalcalco","e":"Tabasco","c":["Reyes Hernández 2da. Sección", "Gregorio Méndez 1ra. Sección"]},
+  "86657":{"m":"Comalcalco","e":"Tabasco","c":["Sur 2a Secc (La Trinidad)", "Sur 3a Secc (El Zapote)"]},
+  "86658":{"m":"Comalcalco","e":"Tabasco","c":["San Joaquín", "Oriente 2da. Sección (San Cayetano)", "Sur 1ra. Sección", "Sur 4ta. Sección", "Oriente 4ta. Sección (Tripa Ciega)", "Sur 5ta. Sección", "Oriente 3a Secc", "Oriente 5a Secc (La Candelaria)", "Oriente 6ta. Sección (Los Mulatos)"]},
+  "86660":{"m":"Comalcalco","e":"Tabasco","c":["Carlos Greene 1ra. Sección Dos (Colonia Jiménez)", "Carlos Greene 1ra. Sección Tres (Colonia el Limón)", "Arena 2da. Sección", "Arroyo Hondo 1ra. Sección (Guácimo)", "Arroyo Hondo 3ra. Sección", "Carlos Greene", "Arroyo Hondo 2da. Sección", "Carlos Greene 2da. Sección", "Arena 1ra. Sección", "Arena 3ra. Sección", "Arena 4ta. Sección", "Arena 5a Sección", "Arena 6ta. Sección (La Bolsa)"]},
+  "86670":{"m":"Comalcalco","e":"Tabasco","c":["La Quinta", "Norte 1ra. Sección (Buena Vista)", "Oriente 1ra. Sección", "Francisco Trujillo Gurría", "Jesús Carranza", "Cupilco", "Cuxcuxapa", "Chichicapa", "Independencia 2da. Sección", "Paso de Cupilco", "El Ángel", "Independencia 3a Sección", "Champa de Cupilco", "Lagartera", "Novillero 4a Sección", "Carlos Pellicer Cámara", "Uspí", "Potrerillo", "Oriente 1ra. Sección (Santo Domingo)", "Gobernadores"]},
+  "86680":{"m":"Cunduacán","e":"Tabasco","c":["La Playita", "San Benito la Bolsa (Tierra y Libertad)", "Dieciséis de Septiembre", "Amado Gómez 2da. Sección", "El Progreso", "Amado Gómez", "Casa Blanca 1a Secc", "Casa Blanca 2a Secc", "José María Pino Suárez", "La Lucha", "Libertad", "Tierra y Libertad", "Libertad 4ta. Sección (Vicente Guerrero)", "El Tular", "Libertad 5ta. Sección", "Libertad 6ta. Sección (Los Martínez)", "Enrique González Pedrero", "Ignacio Zaragoza", "Río Seco 1ra. Sección"]},
+  "86681":{"m":"Cunduacán","e":"Tabasco","c":["Mantilla", "La Piedra 3ra. Sección", "Yoloxóchitl 2da. Sección", "Once de Febrero 2da. Sección", "Santa Lucía", "San Rafael"]},
+  "86682":{"m":"Cunduacán","e":"Tabasco","c":["La Chonita", "Monterrey", "Río Seco 3ra. Sección (La Playita)"]},
+  "86683":{"m":"Cunduacán","e":"Tabasco","c":["Reforma", "Libertad 2da. Sección"]},
+  "86684":{"m":"Cunduacán","e":"Tabasco","c":["El Tunal", "Alianza para la Producción", "Domingo Amado Brito Salgado", "Libertad 3ra. Sección (Monte Grande)"]},
+  "86686":{"m":"Cunduacán","e":"Tabasco","c":["Miahuatlán 1ra. Sección", "Yoloxóchitl 1ra. Sección", "La Piedra 1ra. Sección", "Miahuatlán 3ra. Sección", "Yoloxóchitl 3ra. Sección", "La Isla", "Yoloxóchitl 2da. Sección (San Severo)", "Miahuatlán (San Gregorio)"]},
+  "86687":{"m":"Cunduacán","e":"Tabasco","c":["Felipe Carrillo Puerto (Ampliación San Felipito)", "Felipe Carrillo Puerto", "Río Seco 2da. Sección (Santiaguito)", "Santo Tomás", "Buenaventura", "Once de Febrero 1ra. Sección", "Carlos Rovirosa (Tulipán)", "Mantilla"]},
+  "86690":{"m":"Cunduacán","e":"Tabasco","c":["Torino", "Cunduacán (El Moté)", "Jardines del Bosque", "El Carmen", "Loma Bonita", "Acrópoilis", "La Esmeralda", "Salamanca", "Adolfo Ruiz Cortines (Morelitos)", "Alianza Periférico", "Nueva Esperanza", "Manuel Andrade", "Guadalupe Victoria", "Huacapa", "Santa Elena", "Cunduacán Centro", "Huacapa y Amestoy", "Abraham de La Cruz", "Atenas 2000", "Cristal", "Cunduacan 2000", "Emiliano Zapata", "Esperanza", "La Finca", "José María Morelos y Pavón (Morelitos)", "Obrera", "Manuel Sánchez Mármol", "Alianza", "San Antonio INVITAB", "Playa Azul", "Magisterial", "Burócratas", "Benito Juárez", "Ceconca"]},
+  "86692":{"m":"Cunduacán","e":"Tabasco","c":["Pechucalco", "Huimango 1ra. Sección"]},
+  "86693":{"m":"Cunduacán","e":"Tabasco","c":["La Piedra 2da. Sección (La Candelaria)", "La Piedra 4ta. Sección", "Huimango 1ra. Sección (La Esperanza)", "Huimango 2da. Sección", "La Piedra 2da. Sección", "Pechucalco 2da. Sección (Las Cruces)", "Huimango 3ra. Sección (Los Cerros)", "Emiliano Zapata (San Mateo)", "Huimango 2da. Sección (La Mona)", "Morelos Piedra 3ra. Sección", "El Palmar"]},
+  "86694":{"m":"Cunduacán","e":"Tabasco","c":["Cúlico 2da. Sección", "Cúlico 1ra. Sección", "Anta"]},
+  "86695":{"m":"Cunduacán","e":"Tabasco","c":["Huimango"]},
+  "86696":{"m":"Cunduacán","e":"Tabasco","c":["Ceiba 1ra. Sección (Jahuactal)", "Dos Ceibas", "Gregorio Méndez", "Rancho Nuevo", "Anta y Cúlico (Santa Rita)", "Buenos Aires", "Huapacal 1a Secc", "Los Cerros", "Cunduacán (San Pedro)", "Huapacal 2da. Sección", "Santa Isabel", "Los Cedros"]},
+  "86697":{"m":"Cunduacán","e":"Tabasco","c":["Marín (Rampa de Panuncio)", "Los Aguilares", "Marín", "Cumuapa 1ra. Sección", "Plátano 1ra. Sección", "Plátano 2da. Sección", "San Eligio", "Laguna de Cucuyulapa", "Colima", "San Pedro Cumuapa", "El Carmen (Cumuapa)", "Cumuapa 2da. Sección", "Felipe Galván", "General Francisco J. Mújica", "Oscar Gómez Sáuz"]},
+  "86698":{"m":"Cunduacán","e":"Tabasco","c":["Nicolás Bravo", "Miahuatlán (San Antonio)", "Miahuatlán 2da. Sección", "Cucuyulapa", "Cucuyulapa 2da. Sección (Puente Samaria)", "Mario Barrueta García", "Miahuatlán (San Nicolás)"]},
+  "86700":{"m":"Macuspana","e":"Tabasco","c":["Siglo XXI", "Arboleda", "José Eduardo Rovirosa Ramírez", "Primero de Mayo", "Tacubaya", "Nuevo Progreso", "Niños Héroes", "Macuspana Centro", "Buenos Aires", "El Castaño", "Independencia", "Josefa Ortiz de Domínguez", "Florida", "Los Gatos", "Obrera", "El Refugio", "Los Pinos I", "Los Pinos II", "PEMEX", "Burócratas", "Primavera", "Divino Misterio", "Municipal", "Crucifijo", "El Recuerdo", "Nueva Imagen", "Luis Donaldo Colosio"]},
+  "86702":{"m":"Macuspana","e":"Tabasco","c":["Francisco I. Madero Bajo", "Sabanitas", "Francisco I. Madero Alto 1ra. Sección", "San Antonio"]},
+  "86703":{"m":"Macuspana","e":"Tabasco","c":["Nicolás Bravo", "Lerdo de Tejada 2da. Sección", "Monte Adentro", "Buena Vista (Puxcatán)", "Loma Linda"]},
+  "86704":{"m":"Macuspana","e":"Tabasco","c":["Abasolo", "Gregorio Méndez 2da. Sección (Pataztal)", "Guadalupe Victoria", "José María Pino Suárez", "Gregorio Méndez 1ra. Sección", "Francisco Villa"]},
+  "86706":{"m":"Macuspana","e":"Tabasco","c":["San Joseíto"]},
+  "86707":{"m":"Macuspana","e":"Tabasco","c":["Ignacio Zaragoza (Los Ateos)"]},
+  "86710":{"m":"Macuspana","e":"Tabasco","c":["Ignacio Manuel Altamirano 2da. Sección", "Tierra Colorada (El Indio)", "Ignacio Manuel Altamirano 1ra. Sección", "Tierra Colorada", "Gustavo A. Madero", "Unión y Libertad"]},
+  "86711":{"m":"Macuspana","e":"Tabasco","c":["Bayona", "Belén", "Monte Largo 1ra. Sección", "Monte Largo 2da. Sección", "Belén Monte Largo 3ra. Sección (Tronchadero)", "Tomás Garrido Canabal"]},
+  "86714":{"m":"Macuspana","e":"Tabasco","c":["Paraíso", "Morelos", "Adolfo López Mateos (Corral Nuevo)", "Cuauhtémoc", "Emiliano Zapata 1ra. Sección", "Emiliano Zapata 2da. Sección", "Veinte de Noviembre", "Mariano Matamoros"]},
+  "86715":{"m":"Macuspana","e":"Tabasco","c":["Reforma 2da. Sección", "Reforma 1ra. Sección", "Buergos", "Lerdo de Tejada 1ra. Sección", "Playas de las Jiménez"]},
+  "86720":{"m":"Macuspana","e":"Tabasco","c":["Doctores", "Limón 2da. Sección Sector A", "Framboyanes", "Santos Degollado 1ra. Sección (El Bayo)", "Petroquímica (Cuidad Pemex)", "Limón 1ra. Sección Sector B", "Nueva División del Bayo (Guatemala)", "La Unión", "18 de Marzo", "La Curva", "Obrera", "20 de Noviembre", "Empleados de Confianza", "Francisco Villa", "El Bayo 2da. Sección", "Las Delicias", "El Canal", "Hermenegildo Galeana (Chiveros)", "15 de Agosto", "El Bayo 1ra. Sección (Granada)"]},
+  "86722":{"m":"Macuspana","e":"Tabasco","c":["Los Güiros", "Pichalito", "Bitzal 2da. Sección", "Bitzal 3ra. Sección", "Bitzal 4ta. Sección", "Bitzal 5ta. Sección", "Bitzal 6ta. Sección", "Bitzal 7ma. Sección", "Los Naranjos 1ra. Sección", "Los Naranjos 2da. Sección"]},
+  "86723":{"m":"Macuspana","e":"Tabasco","c":["Narciso Mendoza (Chilapilla 1ra. Sección)", "Bitzal 1ra. Sección", "Lázaro Cárdenas 1ra. Sección", "Chilapilla 1ra. Sección", "José Colomo", "Encrucijada", "Miguel Hidalgo 2da. Sección"]},
+  "86724":{"m":"Macuspana","e":"Tabasco","c":["Nueva Esperanza", "Vernet 6ta. Sección (San Lorenzo)", "Vernet 1ra. Sección", "Vernet 2da. Sección", "Vernet 3ra. Sección", "Vernet 4ta. Sección (Juan Salas)", "Vernet 5ta. Sección (Corozal)", "Limón 2da. Sección Sector B", "Chilapilla 2da. Sección", "Vernet Sierra de Guadalupe", "Andrés García", "Limón 1ra. Sección Sector C", "Limón 1ra. Sección Sector A"]},
+  "86725":{"m":"Macuspana","e":"Tabasco","c":["Simón Sarlat 2da. Sección (San Martín)", "El Chinal", "El Zapotal", "Aquiles Serdán (San Fernando)", "Simón Sarlat", "García"]},
+  "86726":{"m":"Macuspana","e":"Tabasco","c":["San Juan Bautista", "El Mango", "La Y Griega", "El Naranjo", "Santa Lucía", "Benito Juárez (San Carlos)", "18 de Marzo", "Linda Vista", "Pueblo Nuevo", "Santa Teresa", "Campo Deportivo", "Manuel Vargas Ramírez", "Las Ferias", "La Escalera", "San Francisco", "San Antonio", "Cacahuatalillo", "José López Portillo", "El Regocijo", "INDUVITAB", "Los Arbolitos"]},
+  "86727":{"m":"Macuspana","e":"Tabasco","c":["La Isla 2da. Sección", "Carmen Serdán", "La Isla 1ra. Sección"]},
+  "86728":{"m":"Macuspana","e":"Tabasco","c":["Santos Degollado 2da. Sección", "Miguel Hidalgo 1ra. Sección", "Virginio Chan 3ra. Sección", "Nabor Cornelio", "Pitahaya", "El Venadito", "Lázaro Cárdenas 2da. Sección", "Miguel Orrico de los Llanos"]},
+  "86730":{"m":"Macuspana","e":"Tabasco","c":["El Corchal", "Veinte de Noviembre", "Francisco Bates", "Virginio Chan 1ra. Sección", "Virginio Chan 2da. Sección", "El Congo", "Límbano Blandín 1ra. Sección", "Tepetitán", "Clemente Reyes 1ra. Sección", "Clemente Reyes 2da. Sección (Cantemoc)", "Progreso (Guaruma)", "Chiquihuite"]},
+  "86732":{"m":"Macuspana","e":"Tabasco","c":["El Triunfo 1ra. Sección", "Allende Alto 1ra. Sección", "Allende Alto 2da. Sección", "El Triunfo 2da. Sección", "El Triunfo 3ra. Sección", "La Ceiba"]},
+  "86733":{"m":"Macuspana","e":"Tabasco","c":["Bajo Allende 1ra. Sección", "Pedro C. Colorado 1ra. Sección", "Francisco Javier Mina (El Coco)", "Pedro C. Colorado 2da. Sección (Orizaba)", "Allende Bajo 2da. Sección"]},
+  "86734":{"m":"Macuspana","e":"Tabasco","c":["El Guanal"]},
+  "86735":{"m":"Macuspana","e":"Tabasco","c":["Guacamaya", "Xicotencatl", "Castro y Güiro", "Licenciado Juan César Becerra Bates", "El Güiro"]},
+  "86736":{"m":"Macuspana","e":"Tabasco","c":["Sitio Nuevo", "Tulijá Sección Chinal", "Alcalde Mayor", "Bonanza 1ra. Sección", "Bonanza 2da. Sección", "Allende Bajo 1ra. Sección (San Joaquín)", "El Chinalito", "Clemente Reyes 2da. Sección", "Celia González de Rovirosa"]},
+  "86737":{"m":"Macuspana","e":"Tabasco","c":["El Maluco 1ra. Sección", "Vicente Guerrero 1ra. Sección"]},
+  "86738":{"m":"Macuspana","e":"Tabasco","c":["Nuevo Progreso (La Candelaria)", "La Providencia", "El Porvenir", "Venustiano Carranza (La Alianza)", "Trinidad Malpica Hernández", "Corralillo 1ra. Sección (Nopalapa)", "Corralillo 2da. Sección (La Princesa)"]},
+  "86739":{"m":"Macuspana","e":"Tabasco","c":["Corralillo 1ra. Sección", "Ramón Grande", "Barrial", "Tierra Colorada (Vicente Guerrero 3ra. Sección)", "Maluco 2da. Sección (Juan Vaquero)", "Arroyo Hondo (Vicente Guerrero 2da. Sección)"]},
+  "86740":{"m":"Macuspana","e":"Tabasco","c":["Narciso Mendoza 2da. Sección", "Álvaro Obregón", "Narciso Mendoza 1ra. Sección", "Carlos Greene 2da. Sección"]},
+  "86743":{"m":"Macuspana","e":"Tabasco","c":["Carlos Greene 1ra. Sección", "Guillermo Prieto", "Miguel Allende"]},
+  "86744":{"m":"Macuspana","e":"Tabasco","c":["Abasolo 2da. Sección", "Abasolo 1ra. Sección", "Pedro A. González"]},
+  "86745":{"m":"Macuspana","e":"Tabasco","c":["Melchor Ocampo 3ra. Sección", "Zopo Norte", "Buena Vista (Apasco)", "Chivalito 2da. Sección", "Melchor Ocampo 2da. Sección", "Chivalito 4ta. Sección"]},
+  "86746":{"m":"Macuspana","e":"Tabasco","c":["Alto Tulijá 2da. Sección (Paredón)", "Las Campanas", "Alto Tulijá 1ra. Sección (Lechugal)", "Bajo Tulijá", "Zopo Sur", "San José"]},
+  "86747":{"m":"Macuspana","e":"Tabasco","c":["Santuario 1ra. Sección (Estación Macuspana)", "Melchor Ocampo 1ra. Sección", "Profesor Caparroso 2da. Sección", "Santuario 2da. Sección"]},
+  "86748":{"m":"Macuspana","e":"Tabasco","c":["Profesor Caparroso 1ra. Sección", "Palomas"]},
+  "86750":{"m":"Centla","e":"Tabasco","c":["CETMAR", "El Guanal", "Frontera Centro", "Arenal", "Deportiva", "Grijalva I", "Grijalva II", "Fovissste", "Francisco Villa", "INFONAVIT", "Naval", "Jacobo Nazar", "Quinta Maria", "Ulises García", "De Pescadores", "Nueva Alianza", "Nueva Frontera", "Siglo XXI", "Sol Arena y Mar"]},
+  "86752":{"m":"Centla","e":"Tabasco","c":["Santa María de la Victoria", "La Estrella", "La Victoria", "Nuevo Centla", "Carlos Rovirosa 1ra. Sección", "Carlos Rovirosa 2da. Sección", "Las Mercedes", "El Bosque", "San Francisco", "El Yucatecal", "La Holanda (San Pedrito)", "San Carlos", "Nueva Esperanza (San Pedrito)", "Los Ángeles", "Santa Andrea", "Buenos Aires", "Santa Ana", "El Retiro", "El Refugio"]},
+  "86753":{"m":"Centla","e":"Tabasco","c":["Arroyo Polo 2da. Sección", "Revolución", "Libertad de Allende", "El Palmar", "Felipe Carrillo Puerto Sur (Carrillón)", "Felipe Carrillo Puerto (Centro)", "Felipe Carrillo Puerto Norte (Carrillito)", "Llanuras de Centla", "Lerma", "El Milagro", "Isla del Buey", "El Palmar (Buenavista)", "San Román", "Luis Echeverría Álvarez", "Punta el Manglar", "El Pajaral (Los Pescadores)", "La Punta del Buey", "Arroyo Polo 1ra. Sección", "Arroyo Polo 3ra. Sección"]},
+  "86754":{"m":"Centla","e":"Tabasco","c":["Francisco I. Madero (La Montaña)", "Miramar", "Francisco I Madero", "La Suiza Uno (San Martín)", "La Suiza", "San Ramón", "La Bellota", "La Guadalupe", "La Encina y el Porvenir"]},
+  "86755":{"m":"Centla","e":"Tabasco","c":["Cañaveral Corcovado", "Josefa Ortiz de Domínguez"]},
+  "86756":{"m":"Centla","e":"Tabasco","c":["Las Palmas", "Chichicastle 1ra. Sección", "Chichicastle 2da. Sección", "Ribera Alta 1ra. Sección", "Ribera Alta 3ra. Sección", "Tres Brazos", "Ribera Alta 2da. Sección", "Ribera Alta 2da. Sección (Salsipuedes)", "Ribera Alta Salsipuedes (Salsipuedes)", "Las Tijeras"]},
+  "86757":{"m":"Centla","e":"Tabasco","c":["Santa Rita", "La Herradura", "La Concepción", "El Escoro", "Barra de San Pedro", "Las Delicias", "Tembladeras", "El Porvenir (De Quintín Arauz)", "El Tulipán", "El Pitayo", "El Faisán"]},
+  "86758":{"m":"Centla","e":"Tabasco","c":["Quintín Aráuz", "Nueva Esperanza de Quintín Aráuz", "Chichicastle 3ra. Sección", "San Roque", "Boca de Pantoja", "Hablan los Hechos (Santa Rosa)"]},
+  "86759":{"m":"Centla","e":"Tabasco","c":["Mixteca 3ra. Sección", "Mixteca 2da. Sección", "José María Morelos y Pavón (Tintalillo)", "Mixteca 1ra. Sección", "Chilapa 1ra. Sección (Margen Derecha)", "Escobas (Chilapa Escoba)", "Chilapa 1ra. Sección (Margen Izquierda)", "Boca de Chilapa", "Miguel Hidalgo", "Los Ídolos (Margen Derecha)", "Augusto Gómez Villanueva", "Boca Grande 1ra. Sección", "Chilapa 2da. Sección", "Los Ídolos Margen Izquierda", "Rómulo Cachón Ponce (Hormiguero)"]},
+  "86760":{"m":"Centla","e":"Tabasco","c":["Fronterita", "El Vergel de Allende", "Libertad de Allende", "Ignacio Allende", "San Lorenzo", "José María Morelos y Pavón", "Miguel Hidalgo 1ra. Sección", "Chicozapote 1ra. Sección", "Chicozapote 2da. Sección", "Miguel Hidalgo 2da. Sección"]},
+  "86761":{"m":"Centla","e":"Tabasco","c":["El Naranjal", "Ignacio Zaragoza", "Jalapita", "La Unión", "Vicente Guerrero", "Cuauhtémoc", "San Juan", "El Porvenir", "El Limón (De Vicente Guerrero)", "El Triunfo", "Francisco Villa", "Ribera Alta de Cuauhtémoc"]},
+  "86762":{"m":"Centla","e":"Tabasco","c":["El Guajuco", "San José de Simón Sarlat", "Caparroso", "Álvaro Obregón 2da. Sección (El Lechugal)", "Niños Héroes", "Leandro Rovirosa Wade 1ra. Sección", "Paso de Tabasquillo", "Leandro Rovirosa Wade 2da. Sección", "Veintisiete de Febrero", "García", "San José de Simón Sarlat (El Coco)", "Luis Donaldo Colosio Murrieta", "Constancia y Venecia", "Álvaro Obregón (Santa Cruz)", "Benito Juárez", "Gobernador Cruz", "Simón Sarlat", "Tabasquillo 1ra. Sección", "Tabasquillo 2da. Sección", "San Juanito de Tres Brazos", "Las Porfías", "Pico de Oro", "San José del Carmen", "El Carmen 1ra. Sección", "La Constancia", "El Carmen 2da. Sección", "Kilómetro 18", "El Limón de Simón Sarlat"]},
+  "86767":{"m":"Centla","e":"Tabasco","c":["Buena Vista", "Potrerillo"]},
+  "86768":{"m":"Centla","e":"Tabasco","c":["La Montaña", "Emiliano Zapata", "Gregorio Méndez Magaña", "La Pimienta", "La Sábana", "Cañaveral", "Carlos A. Madrazo", "Francisco Villa (Guano Solo)", "Adolfo López Mateos", "El Bellote", "Lázaro Cárdenas"]},
+  "86770":{"m":"Jonuta","e":"Tabasco","c":["José María Pino Suárez (San Pedro)"]},
+  "86771":{"m":"Jonuta","e":"Tabasco","c":["Esquipulas", "Hidalgo y Tamarindo"]},
+  "86773":{"m":"Jonuta","e":"Tabasco","c":["El Chochal"]},
+  "86774":{"m":"Jonuta","e":"Tabasco","c":["Cirilo y Narváez", "Sacrificio", "Santa Anita del Rosario", "Ribera Baja 1ra. Sección A"]},
+  "86775":{"m":"Jonuta","e":"Tabasco","c":["La Encarnación", "Sitio Nuevo", "Las Palmas", "San José Jimbal"]},
+  "86776":{"m":"Jonuta","e":"Tabasco","c":["San José", "San Miguel", "Francisco J Mújica", "Elpidio Sánchez"]},
+  "86777":{"m":"Jonuta","e":"Tabasco","c":["Torno de la Bola", "Ribera Baja 2da. Sección (Gran Poder)"]},
+  "86780":{"m":"Jonuta","e":"Tabasco","c":["Villa de las Flores", "Municipal", "Carlyle Herrera Argaiz", "El Zapotal", "Jonuta Centro", "Certeza Tabasco", "5 de Mayo", "Jonuta 2000", "Solidaridad"]},
+  "86781":{"m":"Jonuta","e":"Tabasco","c":["Torno Largo 1ra. Sección (El Güiral)", "El Sitio", "Chinal", "Corcobao", "Zapotal 1ra. Sección A", "Zapotal 1ra. Sección B", "Guarda Tierra", "Zapotal 2da. Sección", "Boca de Amatitán"]},
+  "86782":{"m":"Jonuta","e":"Tabasco","c":["Corozal", "Torno Largo 1ra. Sección B", "Boca de San Antonio", "Torno Largo 1ra. Sección A (Benito Juárez)", "Torno Largo 2da. Sección", "Torno Largo 3ra. Sección", "Constitución de 1917 (Jonutilla)", "Chanero Río", "Corozal Río", "Chanero", "San Cristóbal"]},
+  "86783":{"m":"Jonuta","e":"Tabasco","c":["El Sacrificio", "Federico Álvarez 3ra. Sección", "Federico Álvarez 1ra. Sección A", "Ribera Baja 1ra. Sección B"]},
+  "86785":{"m":"Jonuta","e":"Tabasco","c":["Los Giles", "Los Buchecos", "San Felipe", "Lázaro Cárdenas", "Playa Chiquita 2da. Sección", "Los Pájaros", "Playa Chiquita 1ra. Sección A", "El Porvenir", "Cocoyolar (Río Chico)", "El Tinto", "La Piñuela", "La Frutilla", "Tomás Garrido Canabal (El Rincón)"]},
+  "86786":{"m":"Jonuta","e":"Tabasco","c":["Monte Grande (El Pastal)", "Monte Grande", "Monte Grande (Nuevo Mundo)", "Venustiano Carranza (El Pajonal)", "Pueblo Nuevo", "Güiro Arrancado"]},
+  "86787":{"m":"Jonuta","e":"Tabasco","c":["Trinidad y Catalina 2da. Sección", "Trinidad y Catalina 3ra. Sección", "Torno Largo 4ta. Sección", "Quince de Mayo", "Trinidad y Catalina 1ra. Sección", "El Pitero"]},
+  "86789":{"m":"Jonuta","e":"Tabasco","c":["Campo Nuevo", "Santa Rita 1ra. Sección", "Santa Rita 2a Sección", "Carlos Pellicer Cámara (Bajo Amatitán)"]},
+  "86790":{"m":"Jonuta","e":"Tabasco","c":["Las Puercas (Playa Larga 3ra. Sección)", "La Guayaba (Alto Amatitán)", "Playa Larga", "Las Canoas"]},
+  "86793":{"m":"Jonuta","e":"Tabasco","c":["El Barrialito (El Pichal)", "Las Petronas", "El Aguacatal"]},
+  "86794":{"m":"Jonuta","e":"Tabasco","c":["El Porvenir 1ra. Sección", "Boca de San Gerónimo"]},
+  "86795":{"m":"Jonuta","e":"Tabasco","c":["San Geronimito", "Palo Verde", "Boca de San Gerónimo (San Gerónimo)", "Cuyo de Guadalupe", "El Barrial", "Isla Helva de Guadalupe"]},
+  "86796":{"m":"Jonuta","e":"Tabasco","c":["Isla Nuevo Barrialito", "El Bejucal", "Esperanza"]},
+  "86800":{"m":"Teapa","e":"Tabasco","c":["Liberación", "Teapa Centro", "Esquipulas", "El Mure", "Santa Cruz", "Tecomajiaca", "El Cerrito"]},
+  "86801":{"m":"Teapa","e":"Tabasco","c":["Tulipanes", "Calcinado", "Bosques de La Sierra", "Florida", "Independencia", "Reforma", "La Sierra", "Lázaro Cárdenas", "Revolución", "Joyas del Pedregal", "Las Flores", "Eureka y Belén", "Las Grutas", "La Ceiba"]},
+  "86802":{"m":"Teapa","e":"Tabasco","c":["Chacuiba", "Carlos Salinas de Gortari", "La Tejería"]},
+  "86803":{"m":"Teapa","e":"Tabasco","c":["Nueva San Isidro", "Bella Luz", "Mariano Abasolo (Abasolito)", "Manuel Buelta 2da. Sección", "Morelia", "Ignacio Allende 3ra. Sección", "Municipal", "Manuel Buelta 1ra. Sección", "Villa Verde"]},
+  "86805":{"m":"Teapa","e":"Tabasco","c":["Nicolás Bravo 2da. Sección", "Nicolás Bravo 1ra. Sección"]},
+  "86806":{"m":"Teapa","e":"Tabasco","c":["Mina y Matamoros (La Trinidad)", "Francisco Javier Mina (Argentina)", "Arcadio Zentella", "Mina y Matamoros (San Pablo Tamborel)"]},
+  "86807":{"m":"Teapa","e":"Tabasco","c":["Vicente Guerrero (Las Nieves)", "Vicente Guerrero (Lerma)", "Vicente Guerrero (San Lorenzo)", "Vicente Guerrero (Guanal)"]},
+  "86808":{"m":"Teapa","e":"Tabasco","c":["Mariano Abasolo", "Ignacio Allende 2a Secc", "Ignacio Allende 1ra. Sección", "Chapultepec"]},
+  "86820":{"m":"Teapa","e":"Tabasco","c":["Juan Aldama 2da. Sección", "Juan Aldama", "Colorado (Benito Juárez)"]},
+  "86823":{"m":"Teapa","e":"Tabasco","c":["Las Lilias", "Hermenegildo Galeana 2da. Sección", "Hermenegildo Galeana 1ra. Sección (Mexiquito)", "Mariano Pedrero 1ra. Sección (La Providencia)", "Ignacio López Rayón 1ra. Sección", "Ignacio López Rayón 2da. Sección"]},
+  "86824":{"m":"Teapa","e":"Tabasco","c":["Andrés Quintana Roo 1ra. Sección", "Andrés Quintana Roo 2da. Sección", "Andrés Quintana Roo", "Hermenegildo Galeana"]},
+  "86825":{"m":"Teapa","e":"Tabasco","c":["Manuel Buelta y Rayón", "Mariano Pedrero 2da. Sección", "Mariano Pedrero 3ra. Sección", "José María Morelos y Pavón (Santa Rita)"]},
+  "86826":{"m":"Teapa","e":"Tabasco","c":["Miguel Hidalgo 2da. Sección (San Joaquín)", "Miguel Hidalgo 2da. Sección (Fco. Sarabia)", "Miguel Hidalgo 2da. Sección (Los Álamos)", "Miguel Hidalgo 1ra. Sección (Las Gardenias)"]},
+  "86827":{"m":"Teapa","e":"Tabasco","c":["José María Morelos y Pavón 1ra. Sección", "José María Morelos y Pavón(San Antonio Las Ánimas)", "José María Morelos y Pavón (Las Delicias)", "José María Morelos y Pavón (Juan Gómez)"]},
+  "86828":{"m":"Teapa","e":"Tabasco","c":["José María Morelos y Pavón 2da. Sección"]},
+  "86830":{"m":"Jalapa","e":"Tabasco","c":["Benito González", "Santo Domingo 2da. Sección", "Tequila", "Tequila 1ra. Sección (La Aurora)", "Tequila 2da. Sección", "Tequila 3ra. Sección (Independencia)", "Tequila 4ta. Sección"]},
+  "86834":{"m":"Jalapa","e":"Tabasco","c":["Víctor Fernández Manero 1ra. Sección (San Antonio)", "Mérida y Guarumo", "Lomas de Vidal", "Puerto Rico"]},
+  "86835":{"m":"Jalapa","e":"Tabasco","c":["Santo Domingo 1ra. Sección (El Llano)", "Víctor Fernández Manero 2da. Sección (San Miguel)", "Víctor Fernández Manero 3ra. Sección (San Isidro)"]},
+  "86836":{"m":"Jalapa","e":"Tabasco","c":["San Cristóbal 1ra. Sección", "Aquiles Serdán 5ta. Sección", "San Cristóbal 2da. Sección"]},
+  "86837":{"m":"Jalapa","e":"Tabasco","c":["Aquiles Serdán 2da. Sección", "Aquiles Serdán 1ra. Sección", "Aquiles Serdán 4ta. Sección", "Aquiles Serdán 3ra. Sección (San Román)"]},
+  "86840":{"m":"Jalapa","e":"Tabasco","c":["San Miguel Afuera", "Jalapa"]},
+  "86843":{"m":"Jalapa","e":"Tabasco","c":["Chipilinar 1ra. Sección", "Chipilinar 4ta. Sección", "San Marcos", "Chipilinar 3ra. Sección", "Chipilinar 1ra. Sección (Guayacán)", "Chipilinar 1ra. Sección la Lima", "Chipilinar 2da. Sección (Contreras)"]},
+  "86844":{"m":"Jalapa","e":"Tabasco","c":["San Juan el Alto 1ra. Sección"]},
+  "86845":{"m":"Jalapa","e":"Tabasco","c":["San Juan el Alto 2da. Sección", "Chichonal 4ta. Sección"]},
+  "86846":{"m":"Jalapa","e":"Tabasco","c":["Chichonal 1ra. Sección", "San Miguel Afuera", "San Miguel Adentro 1ra. Sección", "San Miguel Adentro 2da. Sección", "El Cerro", "Chichonal 2da. Sección", "Chichonal 3ra. Sección (La Capilla)"]},
+  "86850":{"m":"Jalapa","e":"Tabasco","c":["Jalapa"]},
+  "86853":{"m":"Jalapa","e":"Tabasco","c":["Jahuacapa (Puente Grande)", "Jahuacapa"]},
+  "86854":{"m":"Jalapa","e":"Tabasco","c":["Astapa", "Francisco J. Santamaría (Cacao)", "El Dorado", "La Unión (Clavo de la Victoria)"]},
+  "86855":{"m":"Jalapa","e":"Tabasco","c":["Emiliano Zapata", "Río de Teapa", "Progreso"]},
+  "86860":{"m":"Jalapa","e":"Tabasco","c":["Calicanto 1ra. Sección", "Calicanto 2da. Sección", "Huapacal 1ra. Sección", "Huapacal 2da. Sección", "Calicanto (Rinconada)", "Calicanto 3ra. Sección"]},
+  "86863":{"m":"Jalapa","e":"Tabasco","c":["Montaña"]},
+  "86864":{"m":"Jalapa","e":"Tabasco","c":["Puyacatengo Norte", "Puyacatengo Sur", "Guanal 3ra. Sección (Guanalito)", "Guanal 2da. Sección", "Guanal 1ra. Sección"]},
+  "86865":{"m":"Jalapa","e":"Tabasco","c":["Montaña"]},
+  "86870":{"m":"Tacotalpa","e":"Tabasco","c":["Tacotalpa", "Obrera", "Oro Verde", "Pueblo Nuevo", "Graciela Pintado de Madrazo"]},
+  "86874":{"m":"Tacotalpa","e":"Tabasco","c":["Pochitocal 3ra. Sección", "Pochitocal 1ra. Sección (La Palma)", "Santa Rosa 2da. Sección (Estación Poaná)", "Pochitocal 2da. Sección", "Lomas Alegres 3ra. Sección (San Antonio)"]},
+  "86875":{"m":"Tacotalpa","e":"Tabasco","c":["Ceibita 2da. Sección", "Enrique González Pedrero", "Ceibita 1ra. Sección", "Ceiba 2da. Sección (San Luis)", "División del Norte", "Rancho Nuevo", "Roberto Madrazo Pintado"]},
+  "86876":{"m":"Tacotalpa","e":"Tabasco","c":["La Raya 1ra. Sección (Nava)", "Pochitocal 1ra. Sección (Tila y Toronjo)", "La Raya 2da. Sección (Santa Cruz)"]},
+  "86877":{"m":"Tacotalpa","e":"Tabasco","c":["Puyacatengo 1ra. Sección (Ceiba)", "Puyacatengo 2da. Sección (Ceiba)"]},
+  "86878":{"m":"Tacotalpa","e":"Tabasco","c":["Santa Rosa 1ra. Sección", "San Ramón"]},
+  "86880":{"m":"Tacotalpa","e":"Tabasco","c":["Carlos A Madrazo", "Guayal", "El Limón"]},
+  "86882":{"m":"Tacotalpa","e":"Tabasco","c":["Lomas Alegres 1ra. Sección", "Arroyo Ciego 1ra. Sección", "Pasamonos", "Lomas Alegres 4ta. Sección (El Hular)", "Lomas Alegres 2da. Sección (Castañal)", "José María Morelos y Pavón", "Pochitocal 4ta. Sección (San Miguel Juárez)"]},
+  "86884":{"m":"Tacotalpa","e":"Tabasco","c":["Xicoténcatl", "Poaná"]},
+  "86885":{"m":"Tacotalpa","e":"Tabasco","c":["Pomoca", "Arroyo Seco Miraflores", "El Paraíso", "Gran Poder"]},
+  "86886":{"m":"Tacotalpa","e":"Tabasco","c":["Agua Blanca"]},
+  "86887":{"m":"Tacotalpa","e":"Tabasco","c":["Reforma (Madrigal 2da. Sección)", "Lázaro Cárdenas (Madrigal 3ra. Sección)"]},
+  "86888":{"m":"Tacotalpa","e":"Tabasco","c":["La Gloria", "Madrigal 5ta. Sección"]},
+  "86890":{"m":"Tacotalpa","e":"Tabasco","c":["Isabel", "Tapijulapa", "Zunú y Patastal", "Emiliano Zapata"]},
+  "86892":{"m":"Tacotalpa","e":"Tabasco","c":["Arroyo Chispa", "San Manuel", "Madrigal 4ta. Sección", "Graciano Sánchez", "Agua Escondida"]},
+  "86893":{"m":"Tacotalpa","e":"Tabasco","c":["Yajalón Río Seco"]},
+  "86894":{"m":"Tacotalpa","e":"Tabasco","c":["La Raya Zaragoza", "Puxcatán"]},
+  "86895":{"m":"Tacotalpa","e":"Tabasco","c":["Nuevo Madero", "Tomás Garrido Canabal", "Oxolotán", "Libertad", "Cuauhtémoc Barreal", "Francisco I. Madero 1ra. Sección", "Francisco I. Madero 2da. Sección", "Buenos Aires", "Benito Juárez", "Pomoquita", "Nueva Reforma", "Cuviac", "Noypac", "La Cumbre", "La Pila", "Mexiquito"]},
+  "86896":{"m":"Tacotalpa","e":"Tabasco","c":["Caridad Guerrero", "Buena Vista 1ra. Sección", "Cuitláhuac", "Shotal", "Nueva Esperanza", "Villa Luz"]},
+  "86897":{"m":"Tacotalpa","e":"Tabasco","c":["Cerro Blanco 5ta. Sección", "Cerro Blanco 2da. Sección", "Palo Quemado", "Cerro Blanco 4ta. Sección", "Cerro Blanco 3ra. Sección", "La Cuesta", "Cerro Blanco 1ra. Sección"]},
+  "86900":{"m":"Tenosique","e":"Tabasco","c":["Tenosique de Pino Suárez Centro", "Los Angelitos", "Solidaridad"]},
+  "86901":{"m":"Tenosique","e":"Tabasco","c":["Estación Nueva", "Luis Gómez Zeta", "Pueblo Nuevo", "San Román", "María Luisa"]},
+  "86902":{"m":"Tenosique","e":"Tabasco","c":["El Chivo Negro", "Constitución", "Cuauhtémoc", "7 de Noviembre", "Serengueti", "Lomas del Carmen", "Cocoyol", "Magisterial", "La Trinchera", "San Miguelito", "Benito Juárez", "Belén", "Usumacinta", "Santa Bárbara", "Ampliación Cocoyol", "Obrera"]},
+  "86904":{"m":"Tenosique","e":"Tabasco","c":["Tenosique 2000", "La Raza", "La Esperanza", "El Ingenio Hermenegildo Galeana", "Héroes de Nacozari", "Municipal", "Lázaro Cárdenas", "Pueblo Unido", "San Juan", "Luis Donaldo Colosio", "Jardines del Usumacinta", "Pomona", "José María Pino Suárez", "Roberto Madrazo Pintado", "Brisas del Usumacinta", "Militar 38-A", "Unidad y Gratitud", "Guadalupe Tepeyac", "Siquiscab"]},
+  "86905":{"m":"Tenosique","e":"Tabasco","c":["Estapilla", "Canitzán", "El Roblar", "El Copo", "José María Pino Suárez 2da. Sección", "Canitzán 2da. Sección"]},
+  "86906":{"m":"Tenosique","e":"Tabasco","c":["Arena de Hidalgo", "Boca del Cerro", "Centro Usumacinta", "La Isla", "Pomoná 1ra. Sección", "Pomoná 2da. Sección", "Independencia", "El Faisán 2da. Sección", "El Recreo", "Lucio Blanco", "Chaculjí", "El Faisán 1a Secc", "Crisóforo Chiñas", "El Faisán 3ra. Sección (Chiniquijá)", "San Carlos", "Santa Lucía"]},
+  "86907":{"m":"Tenosique","e":"Tabasco","c":["Usumacinta", "José María Pino Suárez 1ra. Sección", "Estapilla 2da. Sección", "Tenosique 1ra. Sección (El Mool)", "Plan de San Antonio"]},
+  "86909":{"m":"Tenosique","e":"Tabasco","c":["Guayacán", "Gregorio Méndez"]},
+  "86910":{"m":"Tenosique","e":"Tabasco","c":["Ignacio Zaragoza", "Benito Juárez 1ra. Sección", "Tata Lázaro", "Benito Juárez 2da. Sección", "Diez de Mayo", "San Isidro las Pozas", "Dieciséis de Septiembre"]},
+  "86911":{"m":"Tenosique","e":"Tabasco","c":["Esperanza Norte (El Veinte)", "El Pensamiento", "Cuatro Hermanos"]},
+  "86912":{"m":"Tenosique","e":"Tabasco","c":["La Palma", "San Isidro Guasiván"]},
+  "86915":{"m":"Tenosique","e":"Tabasco","c":["Nuevo México", "Hermenegildo Galeana", "Santa Elena"]},
+  "86916":{"m":"Tenosique","e":"Tabasco","c":["El Palmar", "Veinte de Noviembre", "Punta de Montaña"]},
+  "86918":{"m":"Tenosique","e":"Tabasco","c":["Emiliano Zapata 2da. Sección (El Carmen)", "La Planada"]},
+  "86919":{"m":"Tenosique","e":"Tabasco","c":["Guadalupe Victoria", "Certeza"]},
+  "86920":{"m":"Tenosique","e":"Tabasco","c":["Reforma Agraria", "La Última Lucha", "El Xotal 1ra. Sección", "El Xotal 2da. Sección"]},
+  "86921":{"m":"Tenosique","e":"Tabasco","c":["Javier Rojo Gómez", "Luis Echeverría Álvarez 1ra. Sección", "Luis Echeverría Álvarez 2da. Sección"]},
+  "86922":{"m":"Tenosique","e":"Tabasco","c":["Emiliano Zapata 1ra. Sección", "Adolfo López Mateos", "Rancho Grande"]},
+  "86923":{"m":"Tenosique","e":"Tabasco","c":["Redención del Campesino", "Los Rieles de San José", "Veteranos de La Revolución", "Santa Rosa", "San Marcos"]},
+  "86924":{"m":"Tenosique","e":"Tabasco","c":["Corregidora Ortiz de Domínguez", "Santo Tomás", "Nuevo Progreso", "Cortijo Nuevo 2da. Sección", "Francisco I. Madero Ríos", "Niños Héroes", "Cortijo Nuevo 1ra. Sección"]},
+  "86925":{"m":"Tenosique","e":"Tabasco","c":["Santa Cruz", "Benito Juárez"]},
+  "86926":{"m":"Tenosique","e":"Tabasco","c":["Acatlipa", "El Pedregal", "Nueva Esperanza"]},
+  "86927":{"m":"Tenosique","e":"Tabasco","c":["Francisco I. Madero Cortazar", "Ignacio Allende", "Miguel Hidalgo", "El Bejucal", "Álvaro Obregón", "La Estancia", "Francisco Villa", "El Repasto", "San Francisco"]},
+  "86928":{"m":"Tenosique","e":"Tabasco","c":["Sueños de Oro", "Nueva Jerusalén", "Carlos Pellicer Cámara", "Bella Vista"]},
+  "86930":{"m":"Balancán","e":"Tabasco","c":["Periférico", "La Colmena", "Niños Héroes", "Prados de Balancán", "Brigada Usumacinta", "El Yomel", "La Guadalupe", "La Mecha", "Obrera", "Pueblo Unido", "La Esperanza", "San Fermín", "Arturo Núñez Jiménez", "Balancán Centro", "Del Carmen", "Palenque", "San Joaquín", "Municipal", "Monte Libano", "Magisterial", "Gregorio Méndez", "Jardines de Balancán", "Carlos A. Madrazo", "Nuevo México", "Carlos Enrique Abreu", "Luis Felipe Domínguez", "Las Flores", "Nuevo Milenio", "San Marcos", "El Colmenar"]},
+  "86933":{"m":"Balancán","e":"Tabasco","c":["Missicab", "Suniná", "Catalina (Altamira)", "Dos Estrellas", "Dos Hermanos", "El Bajío", "El Doble G", "El Dorado", "El Paraíso", "El Recuerdo", "El Sacrificio", "El Zapotal", "Frente Único", "La Aurora", "La Esperanza", "La Providencia (Parada San Antonio)", "Mi Ranchito", "San José 2da. Sección", "San Miguel", "Santa Celia", "Santa Clara", "Santa Elena", "Santa Isabel", "Santa Martha", "Sonora", "La Asunción", "La Providencia", "Las Maravillas", "Santa Marlene"]},
+  "86934":{"m":"Balancán","e":"Tabasco","c":["El Arenal", "Tierra Blanca", "Vicente Guerrero", "San Juan", "Jahuactal", "El Manantial", "Isla Sebastopol", "Las Mercedes", "Macayal", "Santa Rosa", "Soledad", "El Llano", "El Luinar", "Isla Conja", "Mi Gran Aventura", "San Antonio", "Santa Lucía"]},
+  "86935":{"m":"Balancán","e":"Tabasco","c":["Centro Usumacinta", "Uquina y La Loma", "Chacabita", "Anexo Balancán", "Balancán (Carcel Municipal de Balancán)", "Campo Alto", "Chajol", "El Chinal", "El Garrafón", "El Yomel", "Oklahoma", "San Jorge", "Santo Domingo", "El Arrozal", "El Cortador", "El Silencio"]},
+  "86936":{"m":"Balancán","e":"Tabasco","c":["Leona Vicario", "Chancabal", "Isla Missicab", "Bajo Nezahualcoyotl", "Netzahualcóyotl (Santa Ana)", "Multé", "Josefa Ortiz de Domínguez", "Laguna Colorada", "Pajonal", "San Juan (Guerrero)", "Cancún", "El Foco", "El Nido", "El Pajaral", "El Porvenir", "Isla Santa Ana", "La Herradura", "La Poza de la Tortuga", "Las Campanas", "Los Mangos", "Santa Elena", "Santo Domingo", "El Sacrificio", "La Veleta"]},
+  "86937":{"m":"Balancán","e":"Tabasco","c":["Vicente Guerrero Sección Cuba", "Agua Bendita", "El Faisán", "General Luis Felipe Domínguez Suárez", "San José del Río", "Pantoja"]},
+  "86940":{"m":"Balancán","e":"Tabasco","c":["Constitución", "José Narciso Rovirosa", "Santa Cruz", "Aguacatal Dos", "El Sacrificio", "El Sahuayo", "Graciela Pintado de Madrazo", "La Gloria", "La Trinidad", "Los Hermanos Hernández", "Los Tres Reyes", "San Miguel", "Santa Fe", "Santa María Luisa", "San Lazarito"]},
+  "86943":{"m":"Balancán","e":"Tabasco","c":["La Hulería", "San Joaquín 1ra. Sección", "El Pimiental", "La Poza (La Hulería)", "Pejelagarto 2da. Sección", "Acatempan", "El Consuelo", "La Envidia", "La Esperanza", "Potrero del Llano", "San Alberto", "San Joaquín 2da. Sección", "San Manuel", "El Roblar", "La Guadalupe", "San Joaquín", "Santa Josefa"]},
+  "86944":{"m":"Balancán","e":"Tabasco","c":["Tarimas (Emiliano Zapata)", "Pejelagarto 1ra. Sección", "Las Tarimas", "El Carmen", "La Gloria", "La Lupita", "La Victoria", "Santa Adela"]},
+  "86945":{"m":"Balancán","e":"Tabasco","c":["Plan de Guadalupe", "Buena Vista", "El Caoba", "El Chaparral", "El Cristo", "El Deseo", "El Herradero", "El Mango", "El Paraíso", "Fátima", "La Nueva Lucha", "Lontanasa", "Plan de Guadalupe Sección Kilómetro 21", "San Cosme", "San José", "San Nicolás", "Santa Catalina", "Dos Arbolitos", "Plan de Guadalupe Sección Central"]},
+  "86946":{"m":"Balancán","e":"Tabasco","c":["Santa Cruz", "Guajimalpa 1ra. Sección", "El Faustino", "Alianza Campesina", "El Cocotero", "El Achotal", "El Ajusco (Plan de Guadalupe)", "El Clavo", "El Desengaño", "El Recreo", "El Retacito", "El Sacrificio", "El Toro", "Guajimalpa 2da. Sección", "La Gironda", "La Mina", "La Papaya (Manuel Rosado)", "La Unión", "La Victoria", "Las Minitas", "Nueva Esperanza", "Paraíso", "Plan de Guadalupe (El Guapaque)", "San Andrés", "San José", "San Juanito", "San Judas Tadeo", "San Lázaro", "San Luis", "San Manuel", "San Marcos", "San Martín", "Santa Martha", "El Paraíso", "El Rinconcito", "Jalisco", "La Gloria", "La Lucha", "San Miguel", "Santa Rosa", "Tequisquiapan"]},
+  "86947":{"m":"Balancán","e":"Tabasco","c":["Miguel Hidalgo y Costilla", "El Pípila", "San Elpidio (Banco De Grava)", "Ingeniero Mario Calcáneo Sánchez", "Copropiedad Santa Rosenda (Chupacabras)", "El Belén", "El Cupimo", "El Dollar", "El Faisán", "El Jobal", "El Laberinto", "El Marino", "El Porvenir", "La Arenita", "La Lupita", "La Palma", "Las Delicias", "Los Naranjos (Sofocante)", "Los Robles", "Mata de la Hoja", "Miguel Hidalgo 2da. Sección", "Molino de Arroz", "Nuevo Xochimilco", "Oklahoma I", "Rafael Palmer Cámara", "San Francisco", "San Lazarito", "San Manuel", "San Miguel", "Santa Martha", "Santa Rita", "Campo Alto (El Tamarindo)", "El Pato", "El Sacrificio", "La Cruz de Belén", "La Pista", "La Santa Cruz", "La Sultana Dos (Caba Hermanos)", "Los Triángulos", "María de Jesús", "Nueva Esperanza", "Ojo de Agua", "San José Domingo"]},
+  "86950":{"m":"Balancán","e":"Tabasco","c":["El Triunfo"]},
+  "86953":{"m":"Balancán","e":"Tabasco","c":["Cuauhtémoc", "El Destino", "Arroyo el Triunfo 1ra. Sección", "Quetzalcóatl (Cuatro Poblados)"]},
+  "86954":{"m":"Balancán","e":"Tabasco","c":["Agricultores del Norte 1ra. Sección", "Lázaro Cárdenas", "Agricultores del Norte 2da. Sección", "Francisco Villa", "El Pichi", "Veinticuatro de Junio", "Ojo de Agua"]},
+  "86955":{"m":"Balancán","e":"Tabasco","c":["Presidente Adolfo López Mateos", "Licenciado Gustavo Díaz Ordaz", "Adolfo López Mateos", "Zacatecas", "Agua Negra", "Cuatro Hermanos", "El Chimón", "El Pitayo", "El Repudio", "Chalcamaloya", "El Rosarito", "El Tintal Grande", "La Escondida", "La Huasteca", "La Torre", "Licenciado Gustavo Díaz Ordaz 2da. Sección", "Los Venados", "Mag", "Altamira", "El Porvenir", "La Gloria"]},
+  "86956":{"m":"Balancán","e":"Tabasco","c":["San José", "Tierra y Libertad", "Cuatro Caminos", "El Paraíso", "El Diamante", "El Palomar", "3 Potrillos", "La Cuchilla", "Palmira", "Salvador", "San Carlos", "San Francisco", "San Jorge", "La Florida", "El Caporal", "El Naranjito", "El Silencio", "El Tiradero (El Ramón)", "Piedra Santa", "San Felipe", "Santa Isabel", "Santa Rosa"]},
+  "86957":{"m":"Balancán","e":"Tabasco","c":["El Naranjito", "El Mical", "Ingeniero Emilio López Zamora"]},
+  "86960":{"m":"Balancán","e":"Tabasco","c":["El Barí", "Carlos A. Madrazo Becerra", "La Revancha", "El Mical", "Las Maravillas (Bonanza)", "Isla del Carmen", "La Guadalupe", "Corpus Christi", "Las Maravillas", "Los Gómez", "Santa Cruz", "Santa Rosalía", "El Cambio"]},
+  "86963":{"m":"Balancán","e":"Tabasco","c":["El Limón", "Reforma (Provincia)", "Acalán", "Cascadas de Reforma", "Cementerio de los Mayas (El Caballero)", "El Descanso", "Isla el Chipre", "La Gloria", "Las Cumbres", "Palomas", "San Antonio", "San Juanito", "Santa María", "Zaragoza", "Cuatro Hermanos González Piña", "Isla de la Doctora", "Isla Francita", "Isla la Botica"]},
+  "86964":{"m":"Balancán","e":"Tabasco","c":["El Ramonal", "El Capulín", "Arroyo el Triunfo 2da. Sección", "El Chorro (El Capulín)", "Emiliano Zapata Salazar"]},
+  "86965":{"m":"Balancán","e":"Tabasco","c":["El Cibalito", "Último Esfuerzo", "Otatal", "El Carmen", "El Pozo (El Pocito)", "El Pucté", "La Victoria", "Nuevo Paraíso", "San Francisco", "Capitán Felipe Castellanos Díaz (San Pedro)", "Santa Lucía", "El Tamarindo", "Nueva Orma"]},
+  "86966":{"m":"Balancán","e":"Tabasco","c":["Jolochero", "Francisco I. Madero 1ra. Sección", "Francisco I. Madero 2da. Sección", "El Chamizal", "Pan Duro"]},
+  "86967":{"m":"Balancán","e":"Tabasco","c":["Los Cenotes", "Miguel Hidalgo Sacaolas", "Apatzingán", "Cuyos de Caoba", "Vicente Lombardo Toledano", "Buenavista Veintitrés"]},
+  "86970":{"m":"Balancán","e":"Tabasco","c":["Asunción", "Paraíso (El Tinto)", "Cibal de la Gloria", "El Achotal", "La Unión", "Polevar", "Caobal"]},
+  "86973":{"m":"Balancán","e":"Tabasco","c":["Mactún", "El Águila", "Buenavista", "El Triunfo", "La Camaronera", "La Gloria", "La Lucha", "La Providencia", "Los Tres Hermanos", "San Francisco", "San José", "Santa Rosa", "Texas (Vidamar)", "Tres de Mayo", "El Aguacate", "Esperanza", "San Antonio"]},
+  "86974":{"m":"Balancán","e":"Tabasco","c":["Nicolás Bravo (San Nicolás)", "Las Tablas", "Caudillos del Sur", "San Marcos", "Altamira", "Dos de Noviembre", "El Bilín", "El Sacrificio", "Estapilla Tercera Ampliación", "La Lucha", "La Pava", "La Victoria", "Pucteal"]},
+  "86975":{"m":"Balancán","e":"Tabasco","c":["San Pedro", "Acatempan", "Buenavista", "Canutillo (Santa Cruz)", "El Cedro", "La Escoba", "La Purísima", "Las Cabañas", "San Fernando", "San Miguel", "Vista Hermosa", "La Nueva Lucha"]},
+  "86976":{"m":"Balancán","e":"Tabasco","c":["Missicab (La Pita)", "Buena Vista", "Carlos Enrique Ocampo", "Catec", "El Cedro", "El Jobo", "El Limoncito", "El Suspiro", "El Tacistal", "El Triángulo", "Las Coronelas", "Monte Líbano", "San Carlos", "San Francisco", "Santa Cruz", "Santa Teresa", "Canta Rana"]},
+  "86977":{"m":"Balancán","e":"Tabasco","c":["La Cuchilla", "Pangolar", "El Pocito", "El Nopalito", "El Progreso", "El Rosario", "El Tuzo", "El Vergel (Los Trescientos)", "Epimenio Espinoza", "La Concepción", "La Cueva", "La Gloria", "La Herradura", "La Silvita", "Los Colorines", "Los Parra", "Los Pinos", "No Te Metas", "Alegre", "San Gregorio", "San José de Palmiras", "Santa Ana", "Santa Cruz del Santuario", "El Hormiguero", "Las Palmas", "San Antonio", "San Felipe", "Vista Alegre"]},
+  "86980":{"m":"Emiliano Zapata","e":"Tabasco","c":["La Isla"]},
+  "86982":{"m":"Emiliano Zapata","e":"Tabasco","c":["Emiliano Zapata (Sección Jobal)", "Emiliano Zapata (Sección Pochote)", "Emiliano Zapata (Sección el Avispero)"]},
+  "86983":{"m":"Emiliano Zapata","e":"Tabasco","c":["Manuel Andrade Díaz", "Chablé", "Nuevo Chablé", "Nuevo Pochote"]},
+  "86984":{"m":"Emiliano Zapata","e":"Tabasco","c":["Boca de Chacamax", "Tres Letras", "El Cuyo", "Paso de San Román"]},
+  "86985":{"m":"Emiliano Zapata","e":"Tabasco","c":["Chacaj", "Mariché", "Pocvicuc", "Corozal", "Concepción", "Chacama", "Cacao Zona Baja", "Cacao Zona Alta"]},
+  "86986":{"m":"Emiliano Zapata","e":"Tabasco","c":["Cacao", "Río Final", "La Esperanza"]},
+  "86988":{"m":"Emiliano Zapata","e":"Tabasco","c":["La Pita", "Aguacate", "Buena Vista"]},
+  "86989":{"m":"Emiliano Zapata","e":"Tabasco","c":["Gregorio Méndez Magaña (Pénjamo)", "Reforma"]},
+  "86990":{"m":"Emiliano Zapata","e":"Tabasco","c":["Emiliano Zapata Centro"]},
+  "86992":{"m":"Emiliano Zapata","e":"Tabasco","c":["José Marín Lara", "Tierra y Libertad", "Ganadera", "Los Pescadores", "Pedregal de Montecristo", "Unidos en Solidaridad", "Bajos Usumacinta", "San Bartolo", "El Campanario", "Arboledas"]},
+  "86993":{"m":"Emiliano Zapata","e":"Tabasco","c":["Barrio Olvidado", "El Tucuy", "Heriberto Cabrera"]},
+  "86994":{"m":"Emiliano Zapata","e":"Tabasco","c":["Elda y José", "Tierra Montecristo", "Despertar Magisterial", "El Mangal"]},
+  "86995":{"m":"Emiliano Zapata","e":"Tabasco","c":["Ecologista", "Colonos del Usumacinta", "Municipal"]},
+  "86996":{"m":"Emiliano Zapata","e":"Tabasco","c":["El Cerrito", "Santa Isabel", "Carlos A Madrazo", "Luis Donaldo Colosio", "Banrural", "Lázaro Cárdenas", "Luis Donaldo Colosio II", "Militar", "El Mirador", "Buenavista", "Último Esfuerzo"]},
+  "86997":{"m":"Emiliano Zapata","e":"Tabasco","c":["El Recreo", "Las Lomas", "La Ceiba"]},
+  "86998":{"m":"Emiliano Zapata","e":"Tabasco","c":["La Esperanza", "José Armin Marín", "Santa Beatriz", "El Piedral", "José Lehman Ocampo", "Santa Cruz", "Buenos Aires", "Santa Fé"]}
+};
+
+async function _fetchCP(cp) {
+  const cpStr = String(cp).padStart(5, '0');
+
+  // ── 0. Dataset local (instantáneo, sin red) ─────────────────────────────
+  if (_CP_LOCAL[cpStr]) {
+    const d = _CP_LOCAL[cpStr];
+    return d.c.map(colonia => ({
+      colonia,
+      municipio: d.m,
+      estado:    d.e,
+      tipo:      'Colonia',
+    }));
+  }
+
+  // ── Si no está en local, intentar APIs externas ─────────────────────────
+  const T = ms => new Promise((_, r) => setTimeout(() => r(new Error('timeout')), ms));
+
+  // Fuente A: api-sepomex.hckdrk.mx
+  try {
+    const res = await Promise.race([fetch(`https://api-sepomex.hckdrk.mx/query/info_cp/${cpStr}`), T(6000)]);
+    if (res.ok) {
+      const arr = await res.json();
+      const valid = Array.isArray(arr) ? arr.filter(i => i && !i.error && i.response?.estado) : [];
+      if (valid.length > 0) {
+        return valid.map(i => ({
+          colonia:   i.response.asentamiento      || '',
+          municipio: i.response.municipio         || '',
+          estado:    i.response.estado            || '',
+          tipo:      i.response.tipo_asentamiento || '',
+        })).filter(r => r.colonia);
+      }
+    }
+  } catch (_) {}
+
+  // Fuente B: sepomex.icalialabs.com
+  try {
+    const res = await Promise.race([
+      fetch(`https://sepomex.icalialabs.com/api/v1/zip_codes?zip_code=${cpStr}&per_page=200`,
+        { headers: { Accept: 'application/json' } }),
+      T(6000)
+    ]);
+    if (res.ok) {
+      const json = await res.json();
+      const zips = json.zip_codes;
+      if (Array.isArray(zips) && zips.length > 0) {
+        return zips.map(z => ({
+          colonia:   z.d_asenta      || '',
+          municipio: z.d_mnpio       || '',
+          estado:    z.d_estado      || '',
+          tipo:      z.d_tipo_asenta || '',
+        })).filter(r => r.colonia);
+      }
+    }
+  } catch (_) {}
+
+  // Fuente C: sepomex.luisvalencia.me
+  try {
+    const res = await Promise.race([
+      fetch(`https://sepomex.luisvalencia.me/zip_codes?zip_code=${cpStr}&per_page=200`,
+        { headers: { Accept: 'application/json' } }),
+      T(6000)
+    ]);
+    if (res.ok) {
+      const json = await res.json();
+      const zips = json.zip_codes || json.data || json;
+      if (Array.isArray(zips) && zips.length > 0) {
+        return zips.map(z => ({
+          colonia:   z.d_asenta || z.colonia || '',
+          municipio: z.d_mnpio  || z.municipio || '',
+          estado:    z.d_estado || z.estado || '',
+          tipo:      z.d_tipo_asenta || '',
+        })).filter(r => r.colonia);
+      }
+    }
+  } catch (_) {}
+
+  return null;
+}
+
 async function bizLookupCP(cp) {
   const spinner  = document.getElementById('biz-postal-spinner');
   const status   = document.getElementById('biz-postal-status');
@@ -4389,11 +5205,11 @@ async function bizLookupCP(cp) {
   estadoEl.value = '';
   munEl.value = '';
   status.style.color = 'var(--text-muted)';
-  status.textContent = 'Consultando SEPOMEX…';
-  spinner.style.display = 'inline';
+  status.textContent = 'Consultando…';
+  if (spinner) spinner.style.display = 'inline';
 
   function renderRows(rows) {
-    spinner.style.display = 'none';
+    if (spinner) spinner.style.display = 'none';
     if (!rows || rows.length === 0) {
       status.textContent = '⚠ Código postal no encontrado.';
       status.style.color = 'var(--red)';
@@ -4404,7 +5220,7 @@ async function bizLookupCP(cp) {
     rows.forEach(({ colonia, tipo }) => {
       if (!colonia) return;
       const opt = document.createElement('option');
-      opt.value = colonia;
+      opt.value       = colonia;
       opt.textContent = tipo ? `${colonia} (${tipo})` : colonia;
       colSel.appendChild(opt);
     });
@@ -4416,38 +5232,14 @@ async function bizLookupCP(cp) {
     return true;
   }
 
-  // Primary: IcaliaLabs
-  try {
-    const res = await fetch(
-      `https://sepomex.icalialabs.com/api/v1/zip_codes?zip_code=${cp}&per_page=200`,
-      { headers: { 'Accept': 'application/json' } }
-    );
-    if (!res.ok) throw new Error('icalia_' + res.status);
-    const json = await res.json();
-    const zips = json.zip_codes;
-    if (Array.isArray(zips) && zips.length > 0) {
-      renderRows(zips.map(z => ({ colonia: z.d_asenta||'', municipio: z.d_mnpio||'', estado: z.d_estado||'', tipo: z.d_tipo_asenta||'' })));
-      return;
-    }
-    throw new Error('icalia_empty');
-  } catch (_) {}
-
-  // Fallback: hckdrk
-  try {
-    const res = await fetch(`https://api-sepomex.hckdrk.mx/query/info_cp/${cp}`);
-    if (!res.ok) throw new Error('hckdrk_' + res.status);
-    const arr = await res.json();
-    const valid = Array.isArray(arr) ? arr.filter(i => i && !i.error && i.response?.estado) : [];
-    if (valid.length > 0) {
-      renderRows(valid.map(i => ({ colonia: i.response.asentamiento||'', municipio: i.response.municipio||'', estado: i.response.estado||'', tipo: i.response.tipo_asentamiento||'' })));
-      return;
-    }
-    throw new Error('hckdrk_empty');
-  } catch (_) {
-    spinner.style.display = 'none';
-    status.textContent = '⚠ No se encontró información para ese código postal.';
+  const rows = await _fetchCP(cp);
+  if (!rows || rows.length === 0) {
+    if (spinner) spinner.style.display = 'none';
+    status.textContent = '⚠ No se encontró el código postal. Verifica e intenta de nuevo.';
     status.style.color = 'var(--red)';
+    return;
   }
+  renderRows(rows);
 }
 
 async function doBizRegister() {
@@ -4484,15 +5276,25 @@ async function doBizRegister() {
   if (!email.includes('@')) { errEl.textContent = '⚠ Ingresa un correo empresarial válido.';         return; }
   if (phoneRaw.length < 10) { errEl.textContent = '⚠ Ingresa un teléfono de 10 dígitos.';           return; }
   if (pass.length < 8)      { errEl.textContent = '⚠ La contraseña debe tener al menos 8 caracteres.'; return; }
+  if (!bizState._pendingLogoUrl) {
+    errEl.textContent = '⚠ El logo de la empresa es obligatorio para registrarse.';
+    document.getElementById('biz-logo-zone').style.borderColor = 'var(--red)';
+    document.getElementById('biz-logo-zone').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
 
   errEl.textContent  = '';
+  document.getElementById('biz-logo-zone').style.borderColor = 'var(--border-input)';
   btn.disabled       = true;
   btn.textContent    = 'Registrando…';
+
+  const logoUrl = bizState._pendingLogoUrl;
 
   const { data, error } = await _db.from('empresas').insert([{
     nombre,
     categoria,
     sitio_web,
+    logo_url:      logoUrl,
     codigo_postal: postal,
     colonia,
     municipio,
@@ -4526,6 +5328,7 @@ async function doBizRegister() {
     name:       data.nombre,
     category:   data.categoria,
     website:    data.sitio_web,
+    logo_url:   data.logo_url   || null,
     postal:     data.codigo_postal,
     colonia:    data.colonia,
     municipio:  data.municipio,
@@ -4540,6 +5343,7 @@ async function doBizRegister() {
     campaigns:  [],
     offers:     [],
   };
+  bizState._pendingLogoUrl = null;
 
   localStorage.setItem('pc-biz-email', email);
   localStorage.setItem('pc-biz-pass',  pass);
@@ -4552,6 +5356,16 @@ function openBizDashboard() {
   showScreen('biz-dashboard');
   const u = bizState.user;
   document.getElementById('biz-dash-name').textContent = u.name;
+  // Mostrar logo en el dashboard
+  const logoWrap = document.getElementById('biz-dash-logo');
+  if (logoWrap) {
+    if (u.logo_url) {
+      logoWrap.innerHTML = `<img src="${u.logo_url}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;" onerror="this.parentElement.innerHTML='🏢'">`;
+    } else {
+      logoWrap.textContent = '🏢';
+    }
+  }
+
   updateBizKPIs();
   bizShowTab('campaigns');
 }
@@ -5241,33 +6055,181 @@ function bizClearMedia() {
   document.getElementById('biz-upload-zone').style.display = '';
 }
 
-function bizPublishCampaign() {
-  const u = bizState.user;
-  const title   = document.getElementById('camp-title').value.trim();
-  const desc    = document.getElementById('camp-desc').value.trim();
-  const type    = document.getElementById('camp-reward-type').value;
-  const reward  = document.getElementById('camp-reward-value').value.trim();
-  const expires = document.getElementById('camp-expires').value;
-
-  // Generate unique codes for this campaign
-  const genCode = () => title.replace(/\s+/g,'').substring(0,5).toUpperCase() + '-' +
-    Math.random().toString(36).substring(2,6).toUpperCase();
-  const codes = Array.from({length:10}, genCode);
-
-  const camp = {
-    id: 'c' + Date.now(), title, desc, rewardType: type, rewardValue: reward,
-    expires, views: 0, redeemed: 0, active: true,
-    emoji: type === 'wifi' ? '📶' : type === 'gift' ? '🎁' : '🎫',
-    codes, mediaURL: bizState.mediaDataURL || null,
-    status: 'pending',   // pending | approved | rejected
-    submittedAt: new Date().toLocaleString('es-MX'),
-    reviewNote: ''
+// ── Logo de empresa ─────────────────────────────────────────────────────────
+function bizHandleLogo(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 500 * 1024) {
+    document.getElementById('biz-logo-status').textContent = `⚠ Archivo muy grande (${(file.size/1024).toFixed(0)} KB). Máximo 500 KB.`;
+    document.getElementById('biz-logo-status').style.color = 'var(--red)';
+    document.getElementById('biz-logo-zone').style.borderColor = 'var(--red)';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dataUrl = e.target.result;
+    bizState._pendingLogoUrl = dataUrl;  // base64 — se guarda en Supabase al registrar
+    // Preview en el formulario
+    const img  = document.getElementById('biz-logo-preview-img');
+    const emoj = document.getElementById('biz-logo-emoji');
+    if (img)  { img.src = dataUrl; img.style.display = 'block'; }
+    if (emoj) emoj.style.display = 'none';
+    const sizeKb = (file.size / 1024).toFixed(0);
+    document.getElementById('biz-logo-label').textContent = file.name.length > 30 ? file.name.slice(0,27)+'…' : file.name;
+    document.getElementById('biz-logo-status').textContent = `✓ Logo cargado · ${sizeKb} KB`;
+    document.getElementById('biz-logo-status').style.color = 'var(--green)';
+    document.getElementById('biz-logo-zone').style.borderColor = 'var(--green)';
   };
-  u.campaigns.push(camp);
-  bizState.mediaFile = null;
-  bizState.mediaDataURL = null;
-  bizState.campStep = 1;
+  reader.readAsDataURL(file);
+}
 
+async function bizUpdateLogo(input) {
+  const file = input.files[0];
+  if (!file || !bizState.user) return;
+  if (file.size > 500 * 1024) {
+    _showSSIDToast(`⚠ Logo muy grande (${(file.size/1024).toFixed(0)} KB). Máximo 500 KB.`, '#ef4444'); return;
+  }
+  _showSSIDToast('⏳ Subiendo logo…', '#6366f1');
+  const reader = new FileReader();
+  reader.onload = async e => {
+    const dataUrl = e.target.result;
+    // Guardar en Supabase (como base64 en logo_url)
+    const { error } = await _db.from('empresas')
+      .update({ logo_url: dataUrl })
+      .eq('id', bizState.user.id);
+    if (error) {
+      _showSSIDToast('⚠ Error al guardar logo', '#ef4444');
+      return;
+    }
+    bizState.user.logo_url = dataUrl;
+    // Actualizar visual del dashboard
+    const logoWrap = document.getElementById('biz-dash-logo');
+    if (logoWrap) logoWrap.innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
+
+    // Refrescar lista de campañas para actualizar bloqueo
+    bizShowTab('campaigns');
+    _showSSIDToast('✅ Logo actualizado', '#10b981');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Preview helpers para el form ──────────────────────────────
+function getYTIdFromInput(url) {
+  if (!url) return null;
+  const m = url.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/);
+  return m ? m[1] : null;
+}
+
+function bizPreviewYT(url) {
+  const ytId  = getYTIdFromInput(url);
+  const wrap  = document.getElementById('biz-yt-preview');
+  const frame = document.getElementById('biz-yt-frame');
+  const err   = document.getElementById('biz-yt-error');
+  if (ytId) {
+    frame.src           = `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1`;
+    wrap.style.display  = 'block';
+    err.style.display   = 'none';
+  } else if (url.length > 10) {
+    wrap.style.display  = 'none';
+    err.style.display   = 'block';
+    err.textContent     = '⚠ URL de YouTube no reconocida. Copia la URL completa del video.';
+  } else {
+    wrap.style.display  = 'none';
+    err.style.display   = 'none';
+  }
+}
+
+function bizPreviewImagen(url) {
+  const wrap = document.getElementById('biz-img-preview-wrap');
+  const img  = document.getElementById('biz-img-preview');
+  if (url && url.startsWith('http')) {
+    img.src             = url;
+    wrap.style.display  = 'block';
+    img.onerror         = () => { wrap.style.display = 'none'; };
+  } else {
+    wrap.style.display  = 'none';
+  }
+}
+
+async function bizPublishCampaign() {
+  const u         = bizState.user;
+  const title     = document.getElementById('camp-title').value.trim();
+  const desc      = document.getElementById('camp-desc').value.trim();
+  const type      = document.getElementById('camp-reward-type').value;
+  const reward    = document.getElementById('camp-reward-value').value.trim();
+  const expires   = document.getElementById('camp-expires').value;
+  const videoUrl  = (document.getElementById('camp-video-url')?.value  || '').trim();
+  const imagenUrl = (document.getElementById('camp-imagen-url')?.value || '').trim();
+  const btn       = document.querySelector('#biz-camp-step3 .btn-primary');
+
+  if (!title || !reward) {
+    _showSSIDToast('⚠ Completa el nombre y la recompensa', '#ef4444');
+    return;
+  }
+
+  const emoji   = type === 'wifi' ? '📶' : type === 'gift' ? '🎁' : '🎫';
+
+  // Guardar en Supabase
+  const campanaDB = {
+    empresa_id:        u.id,
+    empresa_nombre:    u.name,
+    empresa_categoria: u.category || '',
+    nombre:            title,
+    descripcion:       desc,
+    tipo:              type,
+    premio:            reward,
+    expires:           expires || null,
+    emoji:             emoji,
+    status:            'pending',
+    video_url:         videoUrl  || null,
+    imagen_url:        imagenUrl || null,
+    vistas:            0,
+    canjeados:         0,
+  };
+
+  // Objeto local para UI
+  const campLocal = {
+    id: 'c' + Date.now(), title, desc,
+    rewardType: type, rewardValue: reward,
+    expires, views: 0, redeemed: 0, active: true,
+    emoji, status: 'pending',
+    video_url:  videoUrl  || null,
+    imagen_url: imagenUrl || null,
+    submittedAt: new Date().toLocaleString('es-MX'),
+  };
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
+
+  try {
+    if (_db) {
+      const { data, error } = await _db.from('campanas').insert([campanaDB]).select().single();
+      if (error) throw error;
+      campLocal.id         = data.id;
+      campLocal.supabaseId = data.id;
+    }
+  } catch(err) {
+    console.error('[PubliConnect] Error guardando campaña:', err.message);
+    _showSSIDToast('⚠ Error al guardar: ' + err.message, '#ef4444');
+    if (btn) { btn.disabled = false; btn.textContent = '🚀 Publicar campaña'; }
+    return;
+  }
+
+  u.campaigns.push(campLocal);
+  bizState.mediaFile    = null;
+  bizState.mediaDataURL = null;
+  bizState.campStep     = 1;
+
+  // Limpiar campos
+  ['camp-video-url','camp-imagen-url'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  ['biz-yt-preview','biz-img-preview-wrap'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+
+  if (btn) { btn.disabled = false; btn.textContent = '🚀 Publicar campaña'; }
   _showSSIDToast('📋 Campaña enviada — pendiente de revisión', '#6366f1');
   openBizDashboard();
 }
